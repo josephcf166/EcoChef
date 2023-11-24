@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "EcoChef"
+rootProject.name = "My Application"
 include(":app")
  
