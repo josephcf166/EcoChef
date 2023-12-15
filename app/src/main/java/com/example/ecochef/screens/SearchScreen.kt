@@ -26,11 +26,12 @@ fun SearchScreen(componentActivity: ComponentActivity){
         var ingredientNames = ArrayList<String>()
         for (ingredient in ingredients) {
             val prefs = componentActivity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
-            val selected = prefs.getBoolean(ingredient.name, false)
+            val selected = prefs.getBoolean(ingredient.Iname, false)
             if (selected) {
-                ingredientNames.add(ingredient.name)
+                ingredientNames.add(ingredient.Iname)
             }
         }
+
         Text(
             text = "Search Screen",
             modifier = Modifier.align(Alignment.CenterHorizontally),
