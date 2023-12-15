@@ -3,6 +3,7 @@ package com.example.ecochef.screens
 import android.content.Context.MODE_PRIVATE
 import android.content.res.Resources.Theme
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.Checkbox
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,8 +16,10 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,33 +31,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ecochef.R
 
+
 @Composable
 fun ProfileScreen(activity: ComponentActivity){
     // create list of preference option
-    val radioOptions = listOf("No Preference","Vegetarian","Vegan","Pescetarian")
+    val dietOptions = listOf("No Preference","Vegetarian","Vegan","Pescetarian")
+    val allergyOptions = listOf("No Lactose","No Nuts","No Shellfish")
     // store selected option
-    var (selectedOption, onOptionSelected) = remember { mutableStateOf(loadPrefSelection(activity))}
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(loadPrefSelection(activity))}
+    val checkstate = remember { mutableStateOf(false) }
     Column (
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.teal_700))
             .wrapContentSize(Alignment.Center)
+            .padding(start = 7.dp)
     ){
         Row {
-        Text(
+            Text(
             text = "Profile Screen",
 //            modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 40.sp
-        )
+            )
         }
-        radioOptions.forEach { text ->
+        Row{
+            Text(
+                text = "Dietary Options:",
+                fontSize = 20.sp
+            )
+        }
+        dietOptions.forEach { text ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .selectable(
                         selected = selectedOption == text,
-                        onClick = { onOptionSelected(text)
-                            savePrefSelection(activity,text)
+                        onClick = {
+                            onOptionSelected(text)
+                            savePrefSelection(activity, text)
                         }
                     )
             ) {
@@ -72,10 +86,50 @@ fun ProfileScreen(activity: ComponentActivity){
                 )
             }
         }
+        Row{
+            Text(
+                text = "Allergen Options:",
+                fontSize = 20.sp
+            )
+        }
+        allergyOptions.forEach { option : String ->
+            val sharedAllergy = activity.getSharedPreferences("myAllergy", MODE_PRIVATE)
+            var isChecked by remember { mutableStateOf(sharedAllergy.getBoolean(option,false)) }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = isChecked,
+                        onClick = { isChecked = isChecked.not()
+                            saveAllergySelection(activity,option,isChecked)}
+                    )
+
+            ) {
+                Checkbox(
+                    checked = isChecked,
+                    onCheckedChange = { isChecked = it
+                        saveAllergySelection(activity,option,isChecked)}
+
+                )
+                Text(
+                    text = option,
+                    style = TextStyle(
+                        fontSize = 24.sp),
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
     }
 }
 
-private fun savePrefSelection(activity: ComponentActivity,selectedOption:String) {
+private fun saveAllergySelection(activity: ComponentActivity, name : String, checked: Boolean) {
+    val sharedAllergy = activity.getSharedPreferences("myAllergy", MODE_PRIVATE)
+    val editor = sharedAllergy.edit()
+    editor.putBoolean(name,checked)
+    editor.apply()
+}
+
+private fun savePrefSelection(activity : ComponentActivity,selectedOption : String) {
     val sharedPref = activity.getSharedPreferences("myPref", MODE_PRIVATE)
     val editor =sharedPref.edit()
     editor.putString("selectedOption",selectedOption)
