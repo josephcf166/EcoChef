@@ -1,5 +1,7 @@
 package com.example.ecochef.bottomnav
 
+import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -21,7 +23,7 @@ import com.example.ecochef.screens.ProfileScreen
 import com.example.ecochef.screens.SearchScreen
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(componentActivity: ComponentActivity) {
     BottomNavigation {
         val navController = rememberNavController()
 
@@ -62,7 +64,7 @@ fun BottomNavigationBar() {
         ) { innerPadding ->
             NavHost(navController = navController, startDestination = "profile",modifier = Modifier
                     .padding(innerPadding)) {
-                composable("profile") { ProfileScreen() }
+                composable("profile") { ProfileScreen(componentActivity) }
                 composable("search") { SearchScreen(/*...*/) }
                 composable("ingredients") { IngredientsScreen(/*...*/) }
             }
