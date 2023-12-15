@@ -1,5 +1,6 @@
 package com.example.ecochef.screens
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,23 +12,31 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ecochef.Ingredient
+import androidx.core.app.ComponentActivity
 import com.example.ecochef.R
+import com.example.ecochef.ingredients
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IngredientsScreen(){
-    var ingredients = listOf<Ingredient>(Ingredient.salmon, Ingredient.bread, Ingredient.chicken)
+fun IngredientsScreen(componentActivity: ComponentActivity){
+    var ingredients = ingredients
+    val prefs = componentActivity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -44,7 +53,13 @@ fun IngredientsScreen(){
             modifier = Modifier.padding(horizontal = 20.dp).padding( bottom = 5.dp))
         LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 150.dp), content = {items(ingredients) {
                 ingredient ->
-            Card (modifier = Modifier.padding(5.dp) ){
+            val selected = remember { mutableStateOf(prefs.getBoolean(ingredient.name, false)) }
+            Card (modifier = Modifier.padding(5.dp),
+                colors = cardColors( containerColor = when {
+                    selected.value -> Color.Green
+                    else -> Color.White
+                }),
+                onClick = {selected.value = selected.value != true}){
                 Image(painter = painterResource(id = ingredient.imageID),
                     contentDescription = ingredient.name,
                     contentScale = ContentScale.FillWidth,
@@ -53,11 +68,32 @@ fun IngredientsScreen(){
                     fontSize = 20.sp,
                     fontStyle = FontStyle(700),
                     modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 4.dp))
+                updateIngredients(activity = componentActivity, ingredient.name, selected.value)
             }
-
         } })
 
 
 
+    }
+}
+
+fun updateIngredients (activity: ComponentActivity, name: String, boolean: Boolean) {
+    val prefs = activity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
+    val editor = prefs.edit()
+    editor.putBoolean(name, boolean)
+    editor.apply()
+}
+
+fun Modifier.conditional(
+    condition: Boolean,
+    ifTrue: Modifier.() -> Modifier,
+    ifFalse: (Modifier.() -> Modifier)? = null
+): Modifier {
+    return if (condition) {
+        then(ifTrue(Modifier))
+    } else if (ifFalse != null) {
+        then(ifFalse(Modifier))
+    } else {
+        this
     }
 }

@@ -65,8 +65,8 @@ fun BottomNavigationBar(componentActivity: ComponentActivity) {
             NavHost(navController = navController, startDestination = "profile",modifier = Modifier
                     .padding(innerPadding)) {
                 composable("profile") { ProfileScreen(componentActivity) }
-                composable("search") { SearchScreen(/*...*/) }
-                composable("ingredients") { IngredientsScreen(/*...*/) }
+                composable("search") { SearchScreen(componentActivity) }
+                composable("ingredients") { IngredientsScreen(componentActivity) }
             }
 
         }
