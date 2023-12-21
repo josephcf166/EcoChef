@@ -60,73 +60,72 @@ import org.jsoup.Jsoup
 
 @Composable
 fun SearchScreen(componentActivity: ComponentActivity){
-    val urls = mutableListOf<String>(
-        "https://www.bbc.co.uk/food/search?q=bread",
-        "https://www.bbc.co.uk/food/search?q=salmon",
-    )
+
+    var urls = mutableListOf<String>()
 
     var recipes by remember { mutableStateOf<List<Recipe>>(emptyList()) }
 
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-    ) {
-        var ingredientNames = ArrayList<String>()
-        for (ingredient in ingredients) {
-            val prefs = componentActivity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
-            val selected = prefs.getBoolean(ingredient.Iname, false)
-            if (selected) {
-                ingredientNames.add(ingredient.Iname)
-            }
+    var ingredientNames = ArrayList<String>()
+    for (ingredient in ingredients) {
+        val prefs = componentActivity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
+        val selected = prefs.getBoolean(ingredient.Iname, false)
+        if (selected) {
+            ingredientNames.add(ingredient.Iname)
         }
-        Text(
-            text = "Search Screen",
-            fontSize = 40.sp
-        )
-        Text(ingredientNames.toString())
     }
 
-    Column (
-        modifier = Modifier.verticalScroll(rememberScrollState())
-                            .background(colorResource(id = R.color.teal_700))
+    var urlString = "https://www.bbc.co.uk/food/search?q="
+    ingredientNames.forEach {
+        urlString = "$urlString$it%2C+"
+    }
+    urls.add(urlString)
+    Text(urlString)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.teal_700))
     ) {
+
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+                .background(colorResource(id = R.color.teal_700))
+        ) {
 //                    IngredientButtons(ingredients)
-        LaunchedEffect(Unit) {
-            MainScope().launch {
-                withContext(Dispatchers.IO) {
-                    val fetchedRecipes = GetRecipe(urls)
-                    // Update the recipes on the main thread
-                    withContext(Dispatchers.Main) {
-                        recipes = fetchedRecipes
+            LaunchedEffect(Unit) {
+                MainScope().launch {
+                    withContext(Dispatchers.IO) {
+                        val fetchedRecipes = GetRecipe(urls)
+                        // Update the recipes on the main thread
+                        withContext(Dispatchers.Main) {
+                            recipes = fetchedRecipes
+                        }
                     }
                 }
             }
-        }
 
-        for(i in recipes.indices step 2) {
+            for (i in recipes.indices step 2) {
 
-            var nextRecipe: Recipe? = null
+                var nextRecipe: Recipe? = null
 
-            var r: Recipe = recipes[i]
-            if(i+1 in recipes.indices){
-                nextRecipe = recipes[i+1]
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-                modifier = Modifier
-                    .padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
-                    .fillMaxWidth()
-            ) {
-
-                RecipeItem(recipe = r)
-
-                if(nextRecipe != null) {
-                    RecipeItem(recipe = nextRecipe)
+                var r: Recipe = recipes[i]
+                if (i + 1 in recipes.indices) {
+                    nextRecipe = recipes[i + 1]
                 }
-            }
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier
+                        .padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
+                        .fillMaxWidth()
+                ) {
+
+                    RecipeItem(recipe = r)
+
+                    if (nextRecipe != null) {
+                        RecipeItem(recipe = nextRecipe)
+                    }
+                }
 
 //                            if(r.ingredients != null){
 //                                for(ing in r.ingredients){
@@ -143,6 +142,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
 //                                    }
 //                                }
 //                            }
+            }
         }
     }
 }
