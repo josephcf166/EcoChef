@@ -83,12 +83,12 @@ fun SearchScreen(componentActivity: ComponentActivity){
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
+            .background(colorResource(id = R.color.mint_white))
     ) {
 
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
-                .background(colorResource(id = R.color.teal_700))
+                .background(colorResource(id = R.color.mint_white))
         ) {
 //                    IngredientButtons(ingredients)
             LaunchedEffect(Unit) {

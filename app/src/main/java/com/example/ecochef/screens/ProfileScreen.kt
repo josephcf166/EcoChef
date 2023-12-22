@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.colorResource
@@ -39,25 +43,44 @@ fun ProfileScreen(activity: ComponentActivity){
     val allergyOptions = listOf("No Lactose","No Nuts","No Shellfish")
     // store selected option
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(loadPrefSelection(activity))}
-    val checkstate = remember { mutableStateOf(false) }
+
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
-            .wrapContentSize(Alignment.Center)
+            .background(colorResource(id = R.color.ash_grey))
             .padding(start = 7.dp)
     ){
-        Row {
+        Row(
+            modifier = Modifier
+                .wrapContentSize(Alignment.Center)
+                .align(Alignment.CenterHorizontally)) {
             Text(
-            text = "Profile Screen",
-//            modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 40.sp
+                text = "Profile Screen",
+                fontSize = 40.sp,
             )
         }
-        Row{
+        Divider(color = colorResource(R.color.black),
+            thickness = 1.dp,
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 5.dp))
+        Row(
+            modifier = Modifier
+                .wrapContentSize(Alignment.Center)
+                .align(Alignment.CenterHorizontally)
+        ) {
             Text(
                 text = "Dietary Options:",
                 fontSize = 20.sp
+            )}
+        Row(
+            modifier = Modifier
+                .wrapContentSize(Alignment.Center)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = "(select one)",
+                fontSize = 20.sp,
+                modifier = Modifier.alpha(0.4f)
             )
         }
         dietOptions.forEach { text ->
@@ -76,7 +99,8 @@ fun ProfileScreen(activity: ComponentActivity){
                     selected = (text == selectedOption),
                     onClick = { onOptionSelected(text)
                               savePrefSelection(activity,text)
-                    }
+                    },
+                    colors = RadioButtonDefaults.colors(selectedColor = colorResource(id = R.color.dark_green)),
                 )
                 Text(
                     text = text,
@@ -86,10 +110,28 @@ fun ProfileScreen(activity: ComponentActivity){
                 )
             }
         }
-        Row{
+        Divider(color = colorResource(R.color.black),
+            thickness = 1.dp,
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 5.dp))
+        Row(
+            modifier = Modifier
+                .wrapContentSize(Alignment.Center)
+                .align(Alignment.CenterHorizontally)
+        ) {
             Text(
                 text = "Allergen Options:",
                 fontSize = 20.sp
+            )}
+        Row(
+            modifier = Modifier
+                .wrapContentSize(Alignment.Center)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = "(select any)",
+                fontSize = 20.sp,
+                modifier = Modifier.alpha(0.4f)
             )
         }
         allergyOptions.forEach { option : String ->
@@ -100,15 +142,22 @@ fun ProfileScreen(activity: ComponentActivity){
                     .fillMaxWidth()
                     .selectable(
                         selected = isChecked,
-                        onClick = { isChecked = isChecked.not()
-                            saveAllergySelection(activity,option,isChecked)}
+                        onClick = {
+                            isChecked = isChecked.not()
+                            saveAllergySelection(activity, option, isChecked)
+                        }
                     )
-
             ) {
                 Checkbox(
                     checked = isChecked,
                     onCheckedChange = { isChecked = it
-                        saveAllergySelection(activity,option,isChecked)}
+                        saveAllergySelection(activity,option,isChecked)},
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = colorResource(id = R.color.dark_green),
+
+                        checkmarkColor = colorResource(id = R.color.ash_grey)
+
+                    ),
 
                 )
                 Text(

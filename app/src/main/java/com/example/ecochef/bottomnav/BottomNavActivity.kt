@@ -2,6 +2,7 @@ package com.example.ecochef.bottomnav
 
 import android.app.Activity
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -21,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ecochef.screens.IngredientsScreen
 import com.example.ecochef.screens.ProfileScreen
 import com.example.ecochef.screens.SearchScreen
+import com.example.ecochef.R
 
 @Composable
 fun BottomNavigationBar(componentActivity: ComponentActivity) {
@@ -39,8 +42,10 @@ fun BottomNavigationBar(componentActivity: ComponentActivity) {
                     val currentDestination = navBackStackEntry?.destination
                     items.forEach { screen ->
                         BottomNavigationItem(
+                            modifier = Modifier
+                                .background(colorResource(id = R.color.dark_green)), // color = nav bg color
                             icon = { Icon(painter = painterResource(screen.icon), "yes") },
-                            label = { Text(screen.title) },
+                            label = { Text(text=screen.title,color= colorResource(id = R.color.mint_white)) }, // colour = nav text color
                             selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                             onClick = {
                                 navController.navigate(screen.route) {
@@ -63,7 +68,7 @@ fun BottomNavigationBar(componentActivity: ComponentActivity) {
             }
         ) { innerPadding ->
             NavHost(navController = navController, startDestination = "profile",modifier = Modifier
-                    .padding(innerPadding)) {
+                .padding(innerPadding)) {
                 composable("profile") { ProfileScreen(componentActivity) }
                 composable("search") { SearchScreen(componentActivity) }
                 composable("ingredients") { IngredientsScreen(componentActivity) }

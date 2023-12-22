@@ -1,6 +1,7 @@
 package com.example.ecochef.screens
 
 import android.content.Context
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.material3.Divider
@@ -21,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -41,7 +44,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
+            .background(colorResource(id = R.color.ash_grey))
             .wrapContentSize(Alignment.Center)
     ){
         Text(
@@ -51,24 +54,39 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
         )
         Divider(color = colorResource(R.color.black),
             thickness = 1.dp,
-            modifier = Modifier.padding(horizontal = 20.dp).padding( bottom = 5.dp))
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 5.dp))
         LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(3), content = {items(ingredients) {
                 ingredient ->
             val selected = remember { mutableStateOf(prefs.getBoolean(ingredient.Iname, false)) }
             Card (modifier = Modifier.padding(5.dp),
                 colors = cardColors( containerColor = when {
-                    selected.value -> Color.Green
-                    else -> Color.White
+                    selected.value -> colorResource(id = R.color.lime_green)
+                    else -> colorResource(id = R.color.mint_white)
+                }),
+                border = BorderStroke(when {
+                        selected.value -> 5.dp
+                        else -> 0.dp }, when{
+                    selected.value -> colorResource(id = R.color.dark_green)
+                    else -> colorResource(id = R.color.mint_white)
                 }),
                 onClick = {selected.value = selected.value != true}){
                 AsyncImage(model = ingredient.imageLink,
                     contentDescription = ingredient.Iname,
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.padding(5.dp).size(120.dp).padding(bottom = 0.dp))
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(120.dp)
+                        .padding(bottom = 0.dp)
+                        .clip(RoundedCornerShape(8.dp)))
+
                 Text(text = ingredient.Iname,
                     fontSize = 15.sp,
                     fontStyle = FontStyle(600),
-                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 20.dp))
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 20.dp))
                 updateIngredients(activity = componentActivity, ingredient.Iname, selected.value)
             }
         } })
