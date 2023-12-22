@@ -1,6 +1,9 @@
 package com.example.ecochef.screens
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,16 +14,21 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -30,18 +38,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ComponentActivity
 import coil.compose.AsyncImage
+import com.example.ecochef.Ingredients
 import com.example.ecochef.R
-import com.example.ecochef.ingredients
+import com.example.ecochef.getIngredientsList
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientsScreen(componentActivity: ComponentActivity){
-    var ingredients = ingredients
-    val prefs = componentActivity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
+    var ingredients = getIngredientsList()
+    var selectedIngredients: SharedPreferences = componentActivity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
+    val check = selectedIngredients.getBoolean("Apple", false)
+    val yourIngredients: MutableList<Ingredients> = remember { mutableStateListOf<Ingredients>() }
+    for ((key, value) in selectedIngredients.all) {
+        if (value == true) {
+            // If the value is true, add the corresponding ingredient to the list
+            Ingredients.values().find { it.Iname == key }?.let { selectedIngredient ->
+                if (selectedIngredient !in yourIngredients) {
+                    yourIngredients.add(selectedIngredient)
+                }
+            }
+        }
+    }
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
+            .background(colorResource(id = R.color.ash_grey))
             .wrapContentSize(Alignment.Center)
     ){
         Text(
@@ -51,26 +71,32 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
         )
         Divider(color = colorResource(R.color.black),
             thickness = 1.dp,
-            modifier = Modifier.padding(horizontal = 20.dp).padding( bottom = 5.dp))
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 5.dp))
+        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(3), content = {items(yourIngredients) {
+            ingredient ->
+            ingredientCard(
+                ingredient = ingredient,
+                selectedIngredients = selectedIngredients,
+                componentActivity = componentActivity,
+                yourIngredients = yourIngredients,
+                isAll = false
+            )
+        }})
+        Text(
+            text = "All Ingredients",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            fontSize = 40.sp
+        )
+        Divider(color = colorResource(R.color.black),
+            thickness = 1.dp,
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 5.dp))
         LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(3), content = {items(ingredients) {
                 ingredient ->
-            val selected = remember { mutableStateOf(prefs.getBoolean(ingredient.Iname, false)) }
-            Card (modifier = Modifier.padding(5.dp),
-                colors = cardColors( containerColor = when {
-                    selected.value -> Color.Green
-                    else -> Color.White
-                }),
-                onClick = {selected.value = selected.value != true}){
-                AsyncImage(model = ingredient.imageLink,
-                    contentDescription = ingredient.Iname,
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.padding(5.dp).size(120.dp).padding(bottom = 0.dp))
-                Text(text = ingredient.Iname,
-                    fontSize = 15.sp,
-                    fontStyle = FontStyle(600),
-                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 20.dp))
-                updateIngredients(activity = componentActivity, ingredient.Iname, selected.value)
-            }
+            ingredientCard(ingredient = ingredient, selectedIngredients = selectedIngredients, componentActivity = componentActivity, yourIngredients = yourIngredients, true)
         } })
 
 
@@ -79,8 +105,8 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
 }
 
 fun updateIngredients (activity: ComponentActivity, name: String, boolean: Boolean) {
-    val prefs = activity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
-    val editor = prefs.edit()
+    val selectedIngredients = activity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
+    val editor = selectedIngredients.edit()
     editor.putBoolean(name, boolean)
     editor.apply()
 }
@@ -96,5 +122,82 @@ fun Modifier.conditional(
         then(ifFalse(Modifier))
     } else {
         this
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ingredientCard(ingredient: Ingredients, selectedIngredients: SharedPreferences, componentActivity: ComponentActivity, yourIngredients: MutableList<Ingredients>, isAll : Boolean) {
+    val selected =
+        remember { mutableStateOf(selectedIngredients.getBoolean(ingredient.Iname, false)) }
+    selected.value = selectedIngredients.getBoolean(ingredient.Iname, false)
+    Card(modifier = Modifier.padding(5.dp),
+        colors = cardColors(
+            containerColor = if (isAll) {
+                when {
+                    selected.value -> colorResource(id = R.color.lime_green)
+                    else -> colorResource(id = R.color.mint_white)
+                }
+            }
+            else {
+                colorResource(id = R.color.lime_green)
+            }
+        ),
+        border = BorderStroke(
+
+            if (isAll) {
+                when {
+                    selected.value -> 5.dp
+                    else -> 0.dp
+                }
+                       }
+            else {
+                 5.dp
+                 }
+            ,if (isAll){
+                when {
+                    selected.value -> colorResource(id = R.color.dark_green)
+                    else -> colorResource(id = R.color.mint_white)
+                }
+            }
+            else{
+                colorResource(id = R.color.dark_green)
+            }
+        ),
+
+        onClick = {
+            selected.value = !selected.value
+            if (selected.value && ingredient !in yourIngredients) {
+                yourIngredients.add(ingredient)
+                updateIngredients(activity = componentActivity, ingredient.Iname, selected.value)
+            }
+            else if (ingredient in yourIngredients && !selected.value) {
+                updateIngredients(activity = componentActivity, ingredient.Iname, selected.value)
+                yourIngredients.remove(ingredient)
+            }
+        }) {
+
+        if (isAll) {
+            AsyncImage(
+                model = ingredient.imageLink,
+                contentDescription = ingredient.Iname,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(120.dp)
+                    .padding(bottom = 0.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+        }
+
+        Text(
+            text = ingredient.Iname,
+            fontSize = 15.sp,
+            fontStyle = FontStyle(600),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 10.dp, top = 10.dp)
+        )
+
     }
 }

@@ -1,5 +1,8 @@
 package com.example.ecochef
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+
 enum class Ingredients (var Iname : String, var imageLink: String) {
     Almond("Almond","https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/a/almond_16x9.jpg"),
     Anchovies("Anchovies","https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/a/anchovy_16x9.jpg"),
@@ -9,12 +12,9 @@ enum class Ingredients (var Iname : String, var imageLink: String) {
     Asparagus("Asparagus","https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/a/asparagus_16x9.jpg"),
     Aubergine("Aubergine","https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/a/aubergine_16x9.jpg"),
     Avocado("Avocado","https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/a/avocado_16x9.jpg"),
-    BabyCorn("Baby Corn","https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/baby_corn_16x9.jpg"),
     Bacon("Bacon","https://images.immediate.co.uk/production/volatile/sites/30/2019/11/Bacon-rashers-in-a-pan-72c07f4.jpg?quality=90&webp=true&resize=700,636"),
     Bagel("Bagel","https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/bagel_16x9.jpg"),
     Baguette("Baguette", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/baguette_16x9.jpg"),
-    BakedBean("Baked Beans", "https://www.recipetineats.com/wp-content/uploads/2014/05/Homemade-Heinz-Baked-Beans_0-SQ.jpg?w=500&h=500&crop=1"),
-    BakingPowder("Baking Powder", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/baking_powder_16x9.jpg"),
     Banana("Banana", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/banana_16x9.jpg"),
     Basil("Basil", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/basil_16x9.jpg"),
     Beef("Beef", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/beef_mince_16x9.jpg"),
@@ -27,8 +27,6 @@ enum class Ingredients (var Iname : String, var imageLink: String) {
     Brie("Brie", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/brie_cheese_16x9.jpg"),
     Brioche("Brioche", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/brioche_16x9.jpg"),
     Broccoli("Broccoli", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/broccoli_16x9.jpg"),
-    BrownSauce("Brown Sauce", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/brown_sugar_16x9.jpg"),
-    BrusselsSprouts("Brussels Sprouts", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/brussels_sprouts_16x9.jpg"),
     Burger("Burger", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/b/beef_burger_16x9.jpg"),
     Butter("Butter", "https://www.southernliving.com/thmb/e9PRDV-qQ9F1GRYh4C_SBAi4foI=/750x0/filters:no_upscale():max_bytes(150000):strip_icc()/How_To_Soften_Butter_013-2000-61e8b4e1ad9c431887472483ae714dbb.jpg"),
     Cabbage("Cabbage", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/c/cabbage_16x9.jpg"),
@@ -59,18 +57,16 @@ enum class Ingredients (var Iname : String, var imageLink: String) {
     Ginger("Ginger", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/g/ginger_16x9.jpg"),
     Gnocchi("Gnocchi", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/g/gnocchi_16x9.jpg"),
     Gravy("Gravy", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/g/gravy_16x9.jpg"),
-    GreenBeans("Green Beans", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/g/green_bean_16x9.jpg"),
     Haddock("Haddock", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/h/haddock_16x9.jpg"),
     Halloumi("Halloumi", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/h/halloumi_cheese_16x9.jpg"),
     Ham("Ham", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/h/ham_16x9.jpg"),
     Hazelnut("Hazelnut", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/h/hazelnut_16x9.jpg"),
     Honey("Honey", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/h/honey_16x9.jpg"),
     Hummus("Hummus", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/h/hummus_16x9.jpg"),
-    KidneyBeans("Kidney Beans", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/k/kidney_bean_16x9.jpg"),
-    KiwiFruit("Kiwi Fruit", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/k/kiwi_fruit_16x9.jpg"),
+    Kiwi("Kiwi", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/k/kiwi_fruit_16x9.jpg"),
     Lamb("lamb", "https://www.laboiteny.com/cdn/shop/articles/RedRubbedBabyLambChopsPg101.jpg?v=1615995080"),
     Lardons("Lardons", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/l/lardons_16x9.jpg"),
-    LasagneSheets("Lasagne Sheets", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/l/lasagne_sheets_16x9.jpg"),
+    Lasagne("Lasagne", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/l/lasagne_sheets_16x9.jpg"),
     Lemon("Lemon", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/l/lemon_16x9.jpg"),
     Lettuce("Lettuce", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/l/lettuce_16x9.jpg"),
     Lobster("Lobster", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/l/lobster_16x9.jpg"),
@@ -92,6 +88,14 @@ enum class Ingredients (var Iname : String, var imageLink: String) {
     Sugar("Sugar", "https://ichef.bbci.co.uk/food/ic/food_16x9_608/foods/c/caster_sugar_16x9.jpg")
 }
 
-var ingredients = Ingredients.values()
+fun getIngredientsList(): MutableList<Ingredients> {
+    val ingredientsList = mutableStateListOf<Ingredients>()
+    for (ingredient in Ingredients.values()) {
+        ingredientsList.add(ingredient)
+    }
+    return ingredientsList
+}
+
+
 
 

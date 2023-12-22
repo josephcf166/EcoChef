@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -51,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.ecochef.R
-import com.example.ecochef.ingredients
+import com.example.ecochef.getIngredientsList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -66,29 +67,29 @@ fun SearchScreen(componentActivity: ComponentActivity){
     var recipes by remember { mutableStateOf<List<Recipe>>(emptyList()) }
 
     var ingredientNames = ArrayList<String>()
-    for (ingredient in ingredients) {
+    for (ingredient in getIngredientsList()) {
         val prefs = componentActivity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
         val selected = prefs.getBoolean(ingredient.Iname, false)
         if (selected) {
             ingredientNames.add(ingredient.Iname)
         }
     }
-
     var urlString = "https://www.bbc.co.uk/food/search?q="
     ingredientNames.forEach {
         urlString = "$urlString$it%2C+"
     }
+    Log.d("SearchDebug", "$urlString")
     urls.add(urlString)
     Text(urlString)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.teal_700))
+            .background(colorResource(id = R.color.mint_white))
     ) {
 
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
-                .background(colorResource(id = R.color.teal_700))
+                .background(colorResource(id = R.color.mint_white))
         ) {
 //                    IngredientButtons(ingredients)
             LaunchedEffect(Unit) {
