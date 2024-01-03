@@ -105,8 +105,8 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
 }
 
 fun updateIngredients (activity: ComponentActivity, name: String, boolean: Boolean) {
-    val selectedIngredients = activity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
-    val editor = selectedIngredients.edit()
+    val prefs = activity.getSharedPreferences("ingredients", Context.MODE_PRIVATE)
+    val editor = prefs.edit()
     editor.putBoolean(name, boolean)
     editor.apply()
 }
