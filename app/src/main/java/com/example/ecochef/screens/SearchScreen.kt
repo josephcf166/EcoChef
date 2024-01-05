@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.ecochef.R
 import com.example.ecochef.getIngredientsList
@@ -61,6 +63,10 @@ import org.jsoup.Jsoup
 
 @Composable
 fun SearchScreen(componentActivity: ComponentActivity){
+
+    var recipeSelectedHandler = remember { mutableStateOf<Boolean>(false) }
+
+    var recipeSelected = remember { mutableStateOf<Recipe?>(null) }
 
     var urls = mutableListOf<String>()
 
@@ -80,7 +86,6 @@ fun SearchScreen(componentActivity: ComponentActivity){
     }
     Log.d("SearchDebug", "$urlString")
     urls.add(urlString)
-    Text(urlString)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -88,7 +93,8 @@ fun SearchScreen(componentActivity: ComponentActivity){
     ) {
 
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.mint_white))
         ) {
 //                    IngredientButtons(ingredients)
@@ -103,36 +109,42 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     }
                 }
             }
+            if (!recipeSelectedHandler.value) {
 
-            for (i in recipes.indices step 2) {
+                for (i in recipes.indices step 2) {
 
-                var nextRecipe: Recipe? = null
+                    var nextRecipe: Recipe? = null
 
-                var r: Recipe = recipes[i]
-                if (i + 1 in recipes.indices) {
-                    nextRecipe = recipes[i + 1]
-                }
+                    var r: Recipe = recipes[i]
+                    if (i + 1 in recipes.indices) {
+                        nextRecipe = recipes[i + 1]
+                    }
 
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier
-                        .padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
-                        .fillMaxWidth()
-                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier
+                            .padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
+                            .fillMaxWidth()
+                    ) {
 
-                    RecipeItem(recipe = r)
+                        RecipeItem(recipe = r, recipeSelectedHandler = recipeSelectedHandler, recipeSelected = recipeSelected)
 
-                    if (nextRecipe != null) {
-                        RecipeItem(recipe = nextRecipe)
+                        if (nextRecipe != null) {
+                            RecipeItem(recipe = nextRecipe, recipeSelectedHandler = recipeSelectedHandler, recipeSelected = recipeSelected)
+                        }
                     }
                 }
+            }
+            else {
+                recipeScreen(recipe = recipeSelected.value)
+            }
 
-//                            if(r.ingredients != null){
-//                                for(ing in r.ingredients){
-//                                    Text(modifier = Modifier.padding(top = 2.dp) ,text = ing)
-//                                }
-//                            }
+          //                  if(r.ingredients != null){
+        //                        for(ing in r.ingredients){
+      //                              Text(modifier = Modifier.padding(top = 2.dp) ,text = ing)
+    //                            }
+  //                          }
 //                            if(r.subRecipes != null){
 //                                for (recipe in r.subRecipes){
 //                                    Text(modifier = Modifier.padding(top = 20.dp) ,text = recipe.name, fontWeight = FontWeight.Bold)
@@ -143,7 +155,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
 //                                    }
 //                                }
 //                            }
-            }
+
         }
     }
 }
@@ -151,7 +163,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
 data class Recipe(var name: String, val ingredients: List<String>?, val subRecipes: List<Recipe>?, val imageURL: String?)
 
 @Composable
-fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier){
+fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHandler: MutableState<Boolean>, recipeSelected: MutableState<Recipe?>){
     Box(
         modifier = modifier
             .wrapContentSize()
@@ -160,7 +172,10 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier){
             .padding(start = 4.dp, end = 4.dp)
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = Color(0xFFE6E0E9))
-            .clickable { },
+            .clickable {
+                recipeSelectedHandler.value = true
+                recipeSelected.value = recipe
+                       },
     ) {
         Column {
 

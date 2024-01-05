@@ -24,6 +24,7 @@ import com.example.ecochef.screens.IngredientsScreen
 import com.example.ecochef.screens.ProfileScreen
 import com.example.ecochef.screens.SearchScreen
 import com.example.ecochef.R
+import com.example.ecochef.screens.recipeScreen
 
 @Composable
 fun BottomNavigationBar(componentActivity: ComponentActivity) {
