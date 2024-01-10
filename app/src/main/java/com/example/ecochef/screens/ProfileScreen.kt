@@ -40,7 +40,7 @@ import com.example.ecochef.R
 fun ProfileScreen(activity: ComponentActivity){
     // create list of preference option
     val dietOptions = listOf("No Preference","Vegetarian","Vegan","Pescetarian")
-    val allergyOptions = listOf("No Lactose","No Nuts","No Shellfish")
+    val allergyOptions = listOf("No Lactose","No Nuts","No Shellfish", "No Gluten")
     // store selected option
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(loadPrefSelection(activity))}
 
