@@ -58,6 +58,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
+val searchCache = HashMap<String, List<Recipe>>()
+
+
 @Composable
 fun SearchScreen(componentActivity: ComponentActivity){
 
@@ -213,7 +216,9 @@ fun LoadNextRecipePage(url: String, page: MutableState<Int>, recipes: MutableSta
             withContext(Dispatchers.IO) {
                 var fetchedRecipes = recipes.value.toMutableMap()
 
-                val foundRecipes = GetRecipe("${url}&page=${page.value}")
+                val searchURL = "${url}&page=${page.value}"
+
+                val foundRecipes = searchCache.getOrPut(searchURL) {GetRecipe(searchURL)}
                 fetchedRecipes[page.value] = foundRecipes
                 page.value++
 
