@@ -48,6 +48,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.compose.material3:material3:1.1.2")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("org.jsoup:jsoup:1.16.2")
     implementation("androidx.core:core-ktx:1.9.0")
