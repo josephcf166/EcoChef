@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,7 +58,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
-var page = 1
 @Composable
 fun SearchScreen(componentActivity: ComponentActivity){
 
@@ -65,6 +65,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
     var recipeSelected = remember { mutableStateOf<Recipe?>(null) }
     var recipes = remember { mutableStateOf<Map<Int, List<Recipe>>>(emptyMap()) }
 
+    var page = remember { mutableIntStateOf(1) }
     var isLoading by remember { mutableStateOf(false) }
 
     var ingredientNames = ArrayList<String>()
@@ -80,10 +81,11 @@ fun SearchScreen(componentActivity: ComponentActivity){
     ingredientNames.forEach {
         urlString = "$urlString$it%2C+"
     }
+
     urlString = urlString.dropLast(4)
     Log.d("SearchDebug", "$urlString")
 
-    LoadNextRecipePage(urlString, recipes)
+    LoadNextRecipePage(urlString, page, recipes)
 
     Box(
         modifier = Modifier
@@ -99,7 +101,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
 
             val finalRecipes = mutableListOf<Recipe>()
 
-            for (p in 1..page){
+            for (p in 1..page.value){
                 recipes.value[p]?.let { finalRecipes.addAll(it) }
             }
 
@@ -152,7 +154,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     var buttonSize by remember { mutableStateOf(DpSize.Zero) }
                     val density = LocalDensity.current
 
-                    if(recipes.value[page-1]?.isNotEmpty() == true){
+                    if(recipes.value[page.value-1]?.isNotEmpty() == true){
                         OutlinedButton(
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
@@ -175,7 +177,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
                                         .fillMaxHeight()
                                         .aspectRatio(1f)
                                 )
-                                LoadNextRecipePage(urlString, recipes)
+                                LoadNextRecipePage(urlString, page, recipes)
                             } else {
                                 Text(text = "More Recipes...")
                             }
@@ -205,15 +207,15 @@ fun SearchScreen(componentActivity: ComponentActivity){
 
 data class Recipe(var name: String, val ingredients: List<String>?, val subRecipes: List<Recipe>?, val imageURL: String?)
 @Composable
-fun LoadNextRecipePage(url: String, recipes: MutableState<Map<Int, List<Recipe>>>){
+fun LoadNextRecipePage(url: String, page: MutableState<Int>, recipes: MutableState<Map<Int, List<Recipe>>>){
     LaunchedEffect(Unit) {
         MainScope().launch {
             withContext(Dispatchers.IO) {
                 var fetchedRecipes = recipes.value.toMutableMap()
 
-                val foundRecipes = GetRecipe("${url}&page=$page")
-                fetchedRecipes[page] = foundRecipes
-                page++
+                val foundRecipes = GetRecipe("${url}&page=${page.value}")
+                fetchedRecipes[page.value] = foundRecipes
+                page.value++
 
                 // Update the recipes on the main thread
                 withContext(Dispatchers.Main) {
