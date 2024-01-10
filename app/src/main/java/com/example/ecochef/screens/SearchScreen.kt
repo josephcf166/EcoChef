@@ -209,6 +209,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
 }
 
 data class Recipe(var name: String, val ingredients: List<String>?, val subRecipes: List<Recipe>?, val imageURL: String?)
+
 @Composable
 fun LoadNextRecipePage(url: String, page: MutableState<Int>, recipes: MutableState<Map<Int, List<Recipe>>>){
     LaunchedEffect(Unit) {

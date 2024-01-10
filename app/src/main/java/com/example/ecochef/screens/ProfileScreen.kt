@@ -1,11 +1,9 @@
 package com.example.ecochef.screens
 
 import android.content.Context.MODE_PRIVATE
-import android.content.res.Resources.Theme
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Checkbox
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,11 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ecochef.R
@@ -39,8 +34,8 @@ import com.example.ecochef.R
 @Composable
 fun ProfileScreen(activity: ComponentActivity){
     // create list of preference option
-    val dietOptions = listOf("No Preference","Vegetarian","Vegan","Pescetarian")
-    val allergyOptions = listOf("No Lactose","No Nuts","No Shellfish", "No Gluten")
+    val dietOptions = listOf("No Preference","Vegetarian","Vegan","Pregnancy-Friendly")
+    val allergyOptions = listOf("No Dairy","No Nuts", "No Gluten", "No Eggs")
     // store selected option
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(loadPrefSelection(activity))}
 

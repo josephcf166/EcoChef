@@ -172,6 +172,7 @@ fun ingredientCard(
         ),
 
         onClick = {
+
             selected.value = !selected.value
             Log.d("MyTag", "$isAll ${ingredient.Iname}: ${selected.value}")
             if (selected.value && ingredient !in yourIngredients) {
