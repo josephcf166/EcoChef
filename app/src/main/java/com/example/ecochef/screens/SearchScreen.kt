@@ -72,6 +72,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import kotlin.math.round
 
 val searchCache = HashMap<String, List<Recipe>>()
 
@@ -87,6 +88,8 @@ fun SearchScreen(componentActivity: ComponentActivity){
 
     var page = remember { mutableIntStateOf(1) }
     var isLoading by remember { mutableStateOf(false) }
+    var loadingRecipes by remember { mutableStateOf(true) }
+
 
     var ingredientNames = ArrayList<String>()
     for (ingredient in getIngredientsList()) {
@@ -138,11 +141,13 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     query = text,
                     onQueryChange = { text = it },
                     onSearch = {
-                        if(!recentSearches.contains(text)){
-                            if(recentSearches.size == 5){
-                                recentSearches.remove(recentSearches.last())
+                        if(text.trim() != "") {
+                            if (!recentSearches.contains(text)) {
+                                if (recentSearches.size == 5) {
+                                    recentSearches.remove(recentSearches.last())
+                                }
+                                recentSearches.add(0, text)
                             }
-                            recentSearches.add(0, text)
                         }
                         active = false },
 
@@ -165,7 +170,20 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     }
                 }
 
-                if (finalRecipes != null) {
+                if(loadingRecipes){
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(top = round(LocalConfiguration.current.screenHeightDp / 2.5).dp)
+                            .width(48.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxHeight()
+                            .aspectRatio(1f)
+                    )
+                }
+
+                if (finalRecipes.isNotEmpty()) {
+                    loadingRecipes = false
+
                     for (i in finalRecipes.indices step 2) {
 
                         var nextRecipe: Recipe? = null
