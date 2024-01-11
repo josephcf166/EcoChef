@@ -97,7 +97,7 @@ fun ProfileScreen(activity: ComponentActivity){
                     onClick = { onOptionSelected(text)
                               savePrefSelection(activity,text)
                     },
-                    colors = RadioButtonDefaults.colors(selectedColor = colorResource(id = R.color.dark_green)),
+                    colors = RadioButtonDefaults.colors(selectedColor = colorResource(id = R.color.spotify_green)),
                 )
                 Text(
                     text = text,
@@ -150,7 +150,7 @@ fun ProfileScreen(activity: ComponentActivity){
                     onCheckedChange = { isChecked = it
                         saveAllergySelection(activity,option,isChecked)},
                     colors = CheckboxDefaults.colors(
-                        checkedColor = colorResource(id = R.color.dark_green),
+                        checkedColor = colorResource(id = R.color.spotify_green),
 
                         checkmarkColor = colorResource(id = R.color.ash_grey)
 

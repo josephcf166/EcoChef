@@ -369,12 +369,12 @@ fun ingredientCard(
                  }
             ,if (isAll){
                 when {
-                    selected.value -> colorResource(id = R.color.dark_green)
+                    selected.value -> colorResource(id = R.color.spotify_green)
                     else -> colorResource(id = R.color.mint_white)
                 }
             }
             else{
-                colorResource(id = R.color.dark_green)
+                colorResource(id = R.color.spotify_green)
             }
         ),
 

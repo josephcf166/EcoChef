@@ -91,7 +91,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
 
     var page = remember { mutableIntStateOf(1) }
     var isLoading by remember { mutableStateOf(false) }
-    var loadingRecipes by remember { mutableStateOf(true) }
+    var loadingRecipes = remember { mutableStateOf(true) }
 
 
     var ingredientNames = ArrayList<String>()
@@ -129,7 +129,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
     urlString.dropLast(1)
     Log.d("SearchDebug", "$urlString")
 
-    LoadNextRecipePage(urlString, page, recipes)
+    LoadNextRecipePage(urlString, page, recipes, loadingRecipes)
 
     Box(
         modifier = Modifier
@@ -202,7 +202,8 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     }
                 }
 
-                if(loadingRecipes){
+
+                if(loadingRecipes.value){
                     CircularProgressIndicator(
                         modifier = Modifier
                             .padding(top = round(LocalConfiguration.current.screenHeightDp / 2.5).dp)
@@ -213,9 +214,17 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     )
                 }
 
-                if (finalRecipes.isNotEmpty()) {
-                    loadingRecipes = false
+                val finalRecipes = mutableListOf<Recipe>()
 
+                for (p in 1..page.value){
+                    recipes.value[p]?.let { finalRecipes.addAll(it) }
+                }
+
+//                if(!(finalRecipes.isEmpty() and loadingRecipes.value)){
+//                    Text(text = "Not Found")
+//                }
+
+                if (finalRecipes.isNotEmpty()) {
                     for (i in finalRecipes.indices step 2) {
 
                         var nextRecipe: Recipe? = null
@@ -316,7 +325,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
 data class Recipe(var name: String, val ingredients: List<String>?, val subRecipes: List<Recipe>?, val imageURL: String?)
 
 @Composable
-fun LoadNextRecipePage(url: String, page: MutableState<Int>, recipes: MutableState<Map<Int, List<Recipe>>>){
+fun LoadNextRecipePage(url: String, page: MutableState<Int>, recipes: MutableState<Map<Int, List<Recipe>>>, loading: MutableState<Boolean>? = null){
     LaunchedEffect(Unit) {
         MainScope().launch {
             withContext(Dispatchers.IO) {
@@ -331,6 +340,9 @@ fun LoadNextRecipePage(url: String, page: MutableState<Int>, recipes: MutableSta
                 // Update the recipes on the main thread
                 withContext(Dispatchers.Main) {
                     recipes.value = fetchedRecipes
+                    if(loading != null){
+                        loading.value = false
+                    }
                 }
             }
         }

@@ -48,6 +48,7 @@ android {
 
 dependencies {
 
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("org.jsoup:jsoup:1.16.2")
