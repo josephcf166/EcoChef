@@ -39,6 +39,7 @@ fun ProfileScreen(activity: ComponentActivity){
     val dietOptions = context.resources.getStringArray(R.array.diets).toList()
     val allergyOptions = context.resources.getStringArray(R.array.allergies).toList()
     // store selected option
+
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(loadPrefSelection(activity))}
 
     Column (
@@ -57,7 +58,7 @@ fun ProfileScreen(activity: ComponentActivity){
             )
         }
         Divider(color = colorResource(R.color.black),
-            thickness = 1.dp,
+            thickness = 2.dp,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 5.dp))
@@ -108,7 +109,7 @@ fun ProfileScreen(activity: ComponentActivity){
             }
         }
         Divider(color = colorResource(R.color.black),
-            thickness = 1.dp,
+            thickness = 2.dp,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 5.dp))
@@ -184,7 +185,7 @@ private fun savePrefSelection(activity : ComponentActivity,selectedOption : Stri
 
 private fun loadPrefSelection(activity: ComponentActivity) : String {
     val sharedPref = activity.getSharedPreferences("myPref", MODE_PRIVATE)
-    return sharedPref.getString("selectedOption", "No Preferences") ?: "No Preferences"
+    return sharedPref.getString("selectedOption", "No Preference") ?: "No Preference"
 }
 
 private fun clearAllPreferences(activity: ComponentActivity) {

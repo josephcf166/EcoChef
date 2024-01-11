@@ -113,7 +113,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
     }
     var pref = loadPrefSelection(componentActivity)
     var allergies = loadAllergySelections(componentActivity)
-    urlString = if (pref != "no_preference") {
+    urlString = if (pref != "no_preference" && pref != "") {
         Log.d("SearchDebug", "$pref")
         "$urlString&diets=$pref,"
     } else {
@@ -157,7 +157,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
                 var recentSearches = remember { mutableStateListOf<String>() }
                 val keyboardController = LocalSoftwareKeyboardController.current
                 if (text == ""){
-                finalRecipes = allRecipes
+                    finalRecipes = allRecipes
                 }
                 DockedSearchBar(
                     modifier = Modifier
@@ -451,7 +451,7 @@ fun GetRecipe(url: String): MutableList<Recipe> {
 
 private fun loadPrefSelection(activity: ComponentActivity) : String {
     val sharedPref = activity.getSharedPreferences("myPref", Context.MODE_PRIVATE)
-    val selectedOption = sharedPref.getString("selectedOption", "No Preferences")
+    val selectedOption = sharedPref.getString("selectedOption", "No Preference")
     if (selectedOption != null) {
         return selectedOption.replace(" ", "_").lowercase()
     }
