@@ -214,15 +214,10 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     )
                 }
 
-                val finalRecipes = mutableListOf<Recipe>()
 
-                for (p in 1..page.value){
-                    recipes.value[p]?.let { finalRecipes.addAll(it) }
+                if(finalRecipes.isEmpty()){
+                    Text(text = "Not Found")
                 }
-
-//                if(!(finalRecipes.isEmpty() and loadingRecipes.value)){
-//                    Text(text = "Not Found")
-//                }
 
                 if (finalRecipes.isNotEmpty()) {
                     for (i in finalRecipes.indices step 2) {
