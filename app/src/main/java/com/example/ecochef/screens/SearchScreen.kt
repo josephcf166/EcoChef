@@ -50,6 +50,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -57,6 +58,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -79,7 +81,7 @@ import kotlin.math.round
 val searchCache = HashMap<String, List<Recipe>>()
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(componentActivity: ComponentActivity){
 
@@ -140,38 +142,49 @@ fun SearchScreen(componentActivity: ComponentActivity){
                 .verticalScroll(rememberScrollState())
                 .background(colorResource(id = R.color.mint_white))
         ) {
+            val allRecipes = mutableListOf<Recipe>()
 
-            val finalRecipes = mutableListOf<Recipe>()
-
-            for (p in 1..page.value){
-                recipes.value[p]?.let { finalRecipes.addAll(it) }
+            for (p in 1..page.value) {
+                recipes.value[p]?.let { allRecipes.addAll(it) }
             }
 
-            if (!recipeSelectedHandler.value) {
+            // Declare finalRecipes as a mutableStateOf
+            var finalRecipes by remember { mutableStateOf(allRecipes) }
 
+            if (!recipeSelectedHandler.value) {
                 var text by remember { mutableStateOf("") }
                 var active by remember { mutableStateOf(false) }
                 var recentSearches = remember { mutableStateListOf<String>() }
-
+                val keyboardController = LocalSoftwareKeyboardController.current
+                if (text == ""){
+                finalRecipes = allRecipes
+                }
                 DockedSearchBar(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
                     query = text,
-                    onQueryChange = { text = it },
-                    onSearch = {
-                        if(text.trim() != "") {
-                            if (!recentSearches.contains(text)) {
-                                if (recentSearches.size == 5) {
-                                    recentSearches.remove(recentSearches.last())
-                                }
-                                recentSearches.add(0, text)
-                            }
+                    onQueryChange = { newText ->
+                        text = newText
+                        // Filter the list of recipes based on the entered text
+                        val filteredRecipes: List<Recipe> = allRecipes.filter { recipe ->
+                            recipe.name.contains(newText, ignoreCase = true)
                         }
-                        active = false },
-
-                    active = active,
-                    onActiveChange = { active = it },
+                        finalRecipes = filteredRecipes.toMutableList()
+                    },
+                    onSearch = {
+                        active = false
+                        keyboardController?.hide()
+                    },
+                    active = false,
+                    onActiveChange = { isActive ->
+                        active = isActive
+                        if (!isActive) {
+                            // Clear the text and reset the filtered recipes when the search bar is deactivated
+                            text = ""
+                            finalRecipes = allRecipes
+                        }
+                    },
                     placeholder = { Text("Recipe Search") },
                     leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                 ) {
