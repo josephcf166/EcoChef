@@ -2,6 +2,7 @@ package com.example.ecochef.screens
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -26,13 +28,21 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,20 +50,25 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -62,9 +77,11 @@ import coil.compose.AsyncImage
 import com.example.ecochef.Ingredients
 import com.example.ecochef.R
 import com.example.ecochef.getIngredientsList
+import com.google.android.material.search.SearchBar
 import java.time.format.TextStyle
+import kotlin.math.round
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun IngredientsScreen(componentActivity: ComponentActivity){
     Log.d("MyTag3", "vrever")
@@ -75,6 +92,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
     val customIngredients: SharedPreferences = remember { componentActivity.getSharedPreferences("custom", Context.MODE_PRIVATE) }
     val yourIngredients: MutableList<Ingredients> = remember { mutableStateListOf<Ingredients>() }
     val allIngredients: MutableList<Ingredients> = remember { mutableStateListOf<Ingredients>() }
+    var searchedIngredients: MutableList<Ingredients> = remember { mutableStateListOf<Ingredients>() }
     val mutableList = mutableListOf<String>()
     LaunchedEffect(key1 = Unit) {
         allIngredients.forEach() {
@@ -98,14 +116,13 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
         for ((key, value) in customIngredients.all) {
             val ing = Ingredients(key, custom = true)
             allIngredients.add(ing)
+            searchedIngredients.add(ing)
         }
 
         for (ing in ingredients) {
             allIngredients.add(ing)
+            searchedIngredients.add(ing)
         }
-    }
-    for (item in allIngredients) {
-        Log.d("MyTag12", item.Iname + " - " +  item.imageInt)
     }
     Column (
         modifier = Modifier
@@ -113,10 +130,80 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
             .background(colorResource(id = R.color.ash_grey))
             .wrapContentSize(Alignment.Center)
     ){
+        /*
+        Row {
+            TextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Filter ingredients") },
+                modifier = Modifier.padding(start=8.dp).width(round(LocalConfiguration.current.screenWidthDp * 0.85).dp)
+            )
+            Button(onClick = { searchQuery = "" }, colors = ButtonDefaults.buttonColors(Color.Transparent)) {
+                Text(text = "X", style = androidx.compose.ui.text.TextStyle(fontSize = 18.sp, color = Color.Black))
+            }
+        }*/
+        var text by remember { mutableStateOf("") }
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        DockedSearchBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            query = text,
+            onQueryChange = {
+
+                text = it
+
+                    searchedIngredients.clear()
+                    allIngredients.forEach() {
+                        if (text.lowercase() in it.Iname.lowercase()) {
+                            Log.d("lag4", "found")
+                            searchedIngredients.add(it)
+                        }
+                    }
+
+                if (text == "") {
+                    keyboardController?.hide()
+                }
+                            },
+            onSearch = { keyboardController?.hide() },
+
+            active = false,
+            onActiveChange = {  },
+            placeholder = { Text("Ingredient Search") },
+            leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
+            trailingIcon = {
+                if (text.isNotEmpty()) {
+                    IconButton(onClick = { text = "" }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = "Clear search"
+                        )
+                    }
+                }
+            },
+        ) {
+            /*
+            recentSearches.forEach {
+                Row (
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .height(50.dp)
+                ) {
+                    Icon(modifier = Modifier.padding(all = 7.dp),
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "History Icon")
+                    Text(text = it, modifier = Modifier.padding(all = 7.dp))
+                }
+            }
+            */
+
+        }
         Text(
             text = "Your Ingredients",
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 40.sp
+            fontSize = 30.sp
         )
         Divider(color = colorResource(R.color.black),
             thickness = 1.dp,
@@ -131,13 +218,14 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
                 componentActivity = componentActivity,
                 yourIngredients = yourIngredients,
                 allIngredients = allIngredients,
+                searchedIngredients = searchedIngredients,
                 isAll = false
             )
         }})
         Text(
             text = "All Ingredients",
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 40.sp
+            fontSize = 30.sp
         )
         Divider(color = colorResource(R.color.black),
             thickness = 1.dp,
@@ -154,10 +242,12 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
             Button(
                 onClick = { showDialog = true },
                 // Set the button width to 66% of the screen's width
-                modifier = Modifier.fillMaxWidth(0.66f),
+                modifier = Modifier
+                    .fillMaxWidth(0.66f)
+                    .height(40.dp),
                 colors = ButtonDefaults.buttonColors(Color(colorResource(id = R.color.lime_green).toArgb()))
             ){
-                Text("+", style = androidx.compose.ui.text.TextStyle(fontSize = 20.sp, color = Color.Black))
+                Text("+ Ingredient", style = androidx.compose.ui.text.TextStyle(fontSize = 18.sp, color = Color.Black), modifier = Modifier.padding(0.dp))
             }
         }
 
@@ -189,6 +279,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
                         Row {
                             Button(onClick = {
                                 allIngredients.add(0, Ingredients(textInput, custom = true))
+                                searchedIngredients.add(0,Ingredients(textInput, custom = true))
                                 showDialog = false
                                 updateCustomIngredients(componentActivity, textInput)
                             }, modifier = Modifier.padding(end=8.dp)) {
@@ -203,9 +294,9 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
             }
         }
 
-        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(3), content = {items(allIngredients) {
+        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(3), content = {items(searchedIngredients) {
                 ingredient ->
-            ingredientCard(ingredient = ingredient, selectedIngredients = selectedIngredients, componentActivity = componentActivity, yourIngredients = yourIngredients, allIngredients, true)
+            ingredientCard(ingredient = ingredient, selectedIngredients = selectedIngredients, componentActivity = componentActivity, yourIngredients = yourIngredients, allIngredients, searchedIngredients,true)
         } })
 
 
@@ -246,6 +337,7 @@ fun ingredientCard(
     componentActivity: ComponentActivity,
     yourIngredients: MutableList<Ingredients>,
     allIngredients: MutableList<Ingredients>,
+    searchedIngredients: MutableList<Ingredients>,
     isAll: Boolean,
 ) {
     val selected =
@@ -303,6 +395,7 @@ fun ingredientCard(
         if (isAll && ingredient.custom) {
             Button(onClick = {
                 allIngredients.remove(ingredient)
+                searchedIngredients.remove(ingredient)
                 yourIngredients.remove(ingredient)
                 removeCustom(activity = componentActivity, ingredient.Iname)
             },
