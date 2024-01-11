@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -34,8 +35,9 @@ import com.example.ecochef.R
 @Composable
 fun ProfileScreen(activity: ComponentActivity){
     // create list of preference option
-    val dietOptions = listOf("No Preference","Vegetarian","Vegan","Pregnancy-Friendly")
-    val allergyOptions = listOf("No Dairy","No Nuts", "No Gluten", "No Eggs")
+    val context = LocalContext.current
+    val dietOptions = context.resources.getStringArray(R.array.diets).toList()
+    val allergyOptions = context.resources.getStringArray(R.array.allergies).toList()
     // store selected option
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(loadPrefSelection(activity))}
 
@@ -183,4 +185,17 @@ private fun savePrefSelection(activity : ComponentActivity,selectedOption : Stri
 private fun loadPrefSelection(activity: ComponentActivity) : String {
     val sharedPref = activity.getSharedPreferences("myPref", MODE_PRIVATE)
     return sharedPref.getString("selectedOption", "No Preferences") ?: "No Preferences"
+}
+
+private fun clearAllPreferences(activity: ComponentActivity) {
+    val sharedPref = activity.getSharedPreferences("myPref", MODE_PRIVATE)
+    with(sharedPref.edit()) {
+        clear()
+        apply()
+    }
+    val sharPref = activity.getSharedPreferences("myAllergy", MODE_PRIVATE)
+    with(sharPref.edit()) {
+        clear()
+        apply()
+    }
 }

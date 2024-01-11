@@ -55,6 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -64,6 +65,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.datastore.preferences.core.Preferences
 import coil.compose.AsyncImage
 import com.example.ecochef.R
 import com.example.ecochef.getIngredientsList
@@ -75,7 +77,6 @@ import org.jsoup.Jsoup
 import kotlin.math.round
 
 val searchCache = HashMap<String, List<Recipe>>()
-
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,11 +102,29 @@ fun SearchScreen(componentActivity: ComponentActivity){
     }
 
     var urlString = "https://www.bbc.co.uk/food/search?q="
-    ingredientNames.forEach {
-        urlString = "$urlString$it%2C+"
+    ingredientNames.forEachIndexed { index, ingredient ->
+        urlString += if (index == ingredientNames.size - 1) {
+            ingredient
+        } else {
+            "$ingredient%2C+"
+        }
     }
-
-    urlString = urlString.dropLast(4)
+    var pref = loadPrefSelection(componentActivity)
+    var allergies = loadAllergySelections(componentActivity)
+    urlString = if (pref != "no_preference") {
+        Log.d("SearchDebug", "$pref")
+        "$urlString&diets=$pref,"
+    } else {
+        "$urlString&diets="
+    }
+    allergies.forEachIndexed { index, allergy ->
+        urlString += if (index == allergies.size - 1) {
+            allergy
+        } else {
+            "$allergy,"
+        }
+    }
+    urlString.dropLast(1)
     Log.d("SearchDebug", "$urlString")
 
     LoadNextRecipePage(urlString, page, recipes)
@@ -409,3 +428,30 @@ fun GetRecipe(url: String): MutableList<Recipe> {
 
     return recipes
 }
+
+private fun loadPrefSelection(activity: ComponentActivity) : String {
+    val sharedPref = activity.getSharedPreferences("myPref", Context.MODE_PRIVATE)
+    val selectedOption = sharedPref.getString("selectedOption", "No Preferences")
+    if (selectedOption != null) {
+        return selectedOption.replace(" ", "_").lowercase()
+    }
+    return ""
+}
+
+private fun loadAllergySelections(activity: ComponentActivity): List<String> {
+    val selectedAllergiesList = mutableListOf<String>()
+    val sharedAllergy = activity.getSharedPreferences("myAllergy", Context.MODE_PRIVATE)
+
+    // Retrieve all entries from the SharedPreferences
+    val allPreferences = sharedAllergy.all
+
+    // Iterate through the preferences and add selected options to the list then return the list of selected allergies
+    for ((name, checked) in allPreferences) {
+        if (checked is Boolean && checked) {
+            val formattedName = name.replace(" ", "_").lowercase()
+            selectedAllergiesList.add(formattedName)
+        }
+    }
+    return selectedAllergiesList
+}
+

@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">My Application</string>
+
+    <string-array name="diets">
+        <item>No Preference</item>
+        <item>Vegetarian</item>
+        <item>Vegan</item>
+        <item>Pregnancy friendly</item>
+    </string-array>
+    <string-array name="allergies">
+        <item>Dairy Free</item>
+        <item>Nut Free</item>
+        <item>Gluten Free</item>
+        <item>Egg Free</item>
+    </string-array>
 </resources>
