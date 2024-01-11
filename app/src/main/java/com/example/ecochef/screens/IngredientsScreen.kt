@@ -154,13 +154,13 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
 
                 text = it
 
-                    searchedIngredients.clear()
-                    allIngredients.forEach() {
-                        if (text.lowercase() in it.Iname.lowercase()) {
-                            Log.d("lag4", "found")
-                            searchedIngredients.add(it)
-                        }
+                searchedIngredients.clear()
+                allIngredients.forEach() {
+                    if (text.lowercase() in it.Iname.lowercase()) {
+                        Log.d("lag4", "found")
+                        searchedIngredients.add(it)
                     }
+                }
 
                 if (text == "") {
                     keyboardController?.hide()
