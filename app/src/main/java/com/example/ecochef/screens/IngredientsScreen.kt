@@ -129,14 +129,6 @@ fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: Mutabl
                         }
                     }
 
-                    yourIngredients.clear()
-                    allIngredients.forEach() {
-                        if (text.lowercase() in it.Iname.lowercase()) {
-                            Log.d("lag4", "found")
-                            yourIngredients.add(it)
-                        }
-                    }
-
                     if (text == "") {
                         keyboardController?.hide()
                     }
@@ -149,7 +141,17 @@ fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: Mutabl
                 leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                 trailingIcon = {
                     if (text.isNotEmpty()) {
-                        IconButton(onClick = { text = "";keyboardController?.hide() }) {
+                        IconButton(onClick = {
+                            text = ""
+                            keyboardController?.hide()
+                            searchedIngredients.clear()
+                            allIngredients.forEach() {
+                                if (text.lowercase() in it.Iname.lowercase()) {
+                                    Log.d("lag4", "found")
+                                    searchedIngredients.add(it)
+                                }
+                            }
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 tint = MaterialTheme.colorScheme.onSurface,
