@@ -68,6 +68,7 @@ import kotlin.math.round
 import com.example.ecochef.recipescraper.LoadNextRecipePage
 import com.example.ecochef.recipescraper.Recipe
 import com.example.ecochef.recipescraper.getFinalSearchURL
+//import com.example.ecochef.roboto
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -176,10 +177,6 @@ fun SearchScreen(
                     )
                 }
 
-                val roboto = FontFamily(
-                    Font(R.font.roboto, FontWeight.Normal),
-                    Font(R.font.roboto_bold, FontWeight.Bold),
-                )
 
                 if((finalRecipes.isEmpty()) and (!loadingRecipes.value)){
                     Text(
@@ -187,7 +184,6 @@ fun SearchScreen(
                             .align(Alignment.CenterHorizontally)
                             .padding(top = (LocalConfiguration.current.screenHeightDp / 3).dp),
                         text = "No Recipes Found...",
-                        fontFamily = roboto,
                         fontSize = 24.sp,
                     )
                 }
@@ -327,7 +323,7 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
                 Text(
                     text = "Prep time: ",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     style = LocalTextStyle.current.merge(
                         TextStyle(
                             lineHeight = 20.sp
@@ -339,7 +335,7 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
                 )
                 Text(
                     text = recipe.prepTime,
-                    fontSize = 14.sp,
+                    fontSize = 10.sp,
                     modifier = Modifier
                         .fillMaxSize(),
                     color = Color.Black
@@ -349,7 +345,7 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
                 Text(
                     text = "Cook time: ",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     style = LocalTextStyle.current.merge(
                         TextStyle(
                             lineHeight = 20.sp
@@ -361,7 +357,7 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
                 )
                 Text(
                     text = recipe.cookTime,
-                    fontSize = 14.sp,
+                    fontSize = 10.sp,
                     modifier = Modifier
                         .fillMaxSize(),
                     color = Color.Black
