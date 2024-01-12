@@ -4,9 +4,13 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,8 +19,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -30,11 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.ecochef.R
-import com.example.ecochef.screens.ProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenTopBar(componentActivity: ComponentActivity, navController: NavHostController) {
+fun ScreenTopBar(
+    componentActivity: ComponentActivity,
+    navController: NavHostController,
+    onRecipePage: MutableState<Boolean>
+) {
 
     val pacifico = FontFamily(
         Font(R.font.pacifico, FontWeight.Normal),
@@ -49,9 +54,21 @@ fun ScreenTopBar(componentActivity: ComponentActivity, navController: NavHostCon
             titleContentColor = Color(colorResource(R.color.white).toArgb()),
         ),
         title = {
+            var ecoPadding = 0.dp
+            var chefPadding = 32.dp
+
+            if(onRecipePage.value) {
+                Icon(
+                    painter = painterResource(R.drawable.ecochef_logo_transparent),
+                    contentDescription = "logo",
+                    tint = Color.Unspecified
+                )
+                ecoPadding = 60.dp
+                chefPadding = 92.dp
+            }
             Text(
                 modifier = Modifier
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp, start = ecoPadding),
                 text = "Eco",
                 fontFamily = pacifico,
                 color = Color(0xff6dc853)
@@ -59,17 +76,32 @@ fun ScreenTopBar(componentActivity: ComponentActivity, navController: NavHostCon
             )
             Text(
                 modifier = Modifier
-                    .padding(top = 8.dp, start = 32.dp),
+                    .padding(top = 8.dp, start = chefPadding),
                 text = "Chef",
                 fontFamily = pacifico
             )
         },
         navigationIcon = {
-            Icon(
-                painter = painterResource(R.drawable.ecochef_logo_transparent),
-                contentDescription = "logo",
-                tint = Color.Unspecified
-            )
+            if(onRecipePage.value) {
+                IconButton(
+                    modifier = Modifier
+                        .padding(top = 8.dp),
+
+                    onClick = { navController.navigate("search")  }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back Button",
+                        tint = Color.White
+                    )
+                }
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.ecochef_logo_transparent),
+                    contentDescription = "logo",
+                    tint = Color.Unspecified
+                )
+            }
         },
         actions = {
             TopBarActions(navController)

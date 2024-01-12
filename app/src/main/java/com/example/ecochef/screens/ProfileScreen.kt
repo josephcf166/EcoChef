@@ -17,6 +17,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +35,9 @@ import com.example.ecochef.R
 
 
 @Composable
-fun ProfileScreen(activity: ComponentActivity){
+fun ProfileScreen(activity: ComponentActivity, onRecipePage: MutableState<Boolean>){
+    onRecipePage.value = false
+
     // create list of preference option
     val context = LocalContext.current
     val dietOptions = context.resources.getStringArray(R.array.diets).toList()

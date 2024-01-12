@@ -13,6 +13,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,6 +37,8 @@ import com.example.ecochef.topbar.ScreenTopBar
 @Composable
 fun BottomNavigationBar(componentActivity: ComponentActivity) {
 
+    var onRecipePage = remember { mutableStateOf(false) }
+
     BottomNavigation {
 
         val navController = rememberNavController()
@@ -45,7 +49,7 @@ fun BottomNavigationBar(componentActivity: ComponentActivity) {
         )
 
         Scaffold(
-            topBar = {  Surface(color=Color(colorResource(R.color.ash_grey).toArgb())) {ScreenTopBar(componentActivity, navController)}},
+            topBar = {  Surface(color=Color(colorResource(R.color.ash_grey).toArgb())) {ScreenTopBar(componentActivity, navController, onRecipePage)}},
             bottomBar = {
                 Surface(color=Color(colorResource(R.color.ash_grey).toArgb())) {
                     BottomNavigation(
@@ -97,9 +101,9 @@ fun BottomNavigationBar(componentActivity: ComponentActivity) {
         ) { innerPadding ->
             NavHost(navController = navController, startDestination = "ingredients",modifier = Modifier
                 .padding(innerPadding)) {
-                composable("ingredients") { IngredientsScreen(componentActivity) }
-                composable("profile") { ProfileScreen(componentActivity) }
-                composable("search") { SearchScreen(componentActivity) }
+                composable("ingredients") { IngredientsScreen(componentActivity, onRecipePage) }
+                composable("profile") { ProfileScreen(componentActivity, onRecipePage) }
+                composable("search") { SearchScreen(componentActivity, navController, onRecipePage) }
             }
 
         }

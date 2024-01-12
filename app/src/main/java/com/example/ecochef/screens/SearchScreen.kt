@@ -1,13 +1,10 @@
 package com.example.ecochef.screens
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DockedSearchBar
@@ -35,13 +31,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarColors
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -56,7 +47,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
@@ -69,16 +59,9 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import androidx.datastore.preferences.core.Preferences
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.ecochef.Ingredients
 import com.example.ecochef.R
-import com.example.ecochef.getIngredientsList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.jsoup.Jsoup
 import kotlin.math.round
 import com.example.ecochef.recipescraper.LoadNextRecipePage
 import com.example.ecochef.recipescraper.Recipe
@@ -87,7 +70,11 @@ import com.example.ecochef.recipescraper.getFinalSearchURL
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun SearchScreen(componentActivity: ComponentActivity){
+fun SearchScreen(
+    componentActivity: ComponentActivity,
+    navController: NavController,
+    onRecipePage: MutableState<Boolean>
+){
 
     var recipeSelectedHandler = remember { mutableStateOf<Boolean>(false) }
     var recipeSelected = remember { mutableStateOf<Recipe?>(null) }
@@ -99,7 +86,10 @@ fun SearchScreen(componentActivity: ComponentActivity){
 
 
     var urlString = getFinalSearchURL(componentActivity)
+
     LoadNextRecipePage(urlString, page, recipes, loadingRecipes)
+
+    onRecipePage.value = false
 
     Box(
         modifier = Modifier
@@ -132,7 +122,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
                 DockedSearchBar(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
                     query = text,
                     onQueryChange = { newText ->
                         text = newText
@@ -275,7 +265,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
                 }
             }
             else {
-                recipeScreen(recipe = recipeSelected.value)
+                RecipeScreen(navController, recipeSelected.value, onRecipePage)
             }
         }
     }
