@@ -62,6 +62,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -214,9 +216,20 @@ fun SearchScreen(componentActivity: ComponentActivity){
                     )
                 }
 
+                val roboto = FontFamily(
+                    Font(R.font.roboto, FontWeight.Normal),
+                    Font(R.font.roboto_bold, FontWeight.Bold),
+                )
 
-                if(finalRecipes.isEmpty()){
-                    Text(text = "Not Found")
+                if((finalRecipes.isEmpty()) and (!loadingRecipes.value)){
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = (LocalConfiguration.current.screenHeightDp / 3).dp),
+                        text = "No Recipes Found...",
+                        fontFamily = roboto,
+                        fontSize = 24.sp,
+                    )
                 }
 
                 if (finalRecipes.isNotEmpty()) {
@@ -265,6 +278,7 @@ fun SearchScreen(componentActivity: ComponentActivity){
                         OutlinedButton(
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
+                                .padding(12.dp)
                                 .then(
                                     if (buttonSize != DpSize.Zero) Modifier.size(buttonSize) else Modifier
                                 )
