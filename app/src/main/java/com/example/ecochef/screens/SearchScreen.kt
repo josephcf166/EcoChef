@@ -44,7 +44,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -277,7 +279,7 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
         modifier = modifier
             .wrapContentSize()
             .width(LocalConfiguration.current.screenWidthDp.dp / 2 - 6.dp)
-            .defaultMinSize(minHeight = LocalConfiguration.current.screenHeightDp.dp / 3f - 32.dp)
+            .defaultMinSize(minHeight = LocalConfiguration.current.screenHeightDp.dp / 4f)
             .padding(start = 4.dp, end = 4.dp)
             .clip(shape = RoundedCornerShape(16.dp))
             .background(color = Color(0xFFE6E0E9))
@@ -288,22 +290,29 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
     ) {
         Column {
 
+            val imageSize = Modifier
+                .size(width = 250.dp, height = 130.dp) // You can adjust the corner radius as needed
+
             if(recipe.imageURL != null){
                 AsyncImage(
                     model = recipe.imageURL,
-                    contentDescription = "Translated description of what the image contains"
+                    contentDescription = "Translated description of what the image contains",
+                    modifier = imageSize,
+                    contentScale = ContentScale.Crop // This will crop the image to fill the bounds if necessary
                 )
             } else {
                 Image(
-                    painter = painterResource(id = R.drawable.placeholder),
-                    contentDescription = "image description"
+                    painter = painterResource(id = R.drawable.default_recipe),
+                    contentDescription = "This is shown when the recipe has no image or no image is able to be scraped from the web page",
+                    modifier = imageSize,
+                    contentScale = ContentScale.Crop // This will crop the image to fill the bounds if necessary
                 )
             }
 
             Text(
                 text = recipe.name,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 style = LocalTextStyle.current.merge(
                     TextStyle(
                         lineHeight = 20.sp
@@ -314,14 +323,50 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
                 color = Color.Black
             )
 
-            Text(
-                text = "blah blah blah",
-                fontSize = 12.sp,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxSize(),
-                color = Color.Black
-            )
+            Row (modifier = Modifier.padding(top=2.dp, bottom = 2.dp)){
+                Text(
+                    text = "Prep time: ",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    style = LocalTextStyle.current.merge(
+                        TextStyle(
+                            lineHeight = 20.sp
+                        )
+                    ),
+                    modifier = Modifier
+                        .padding(start=8.dp, end=2.dp),
+                    color = Color.Black
+                )
+                Text(
+                    text = recipe.prepTime,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = Color.Black
+                )
+            }
+            Row (modifier = Modifier.padding(top=2.dp, bottom = 5.dp)){
+                Text(
+                    text = "Cook time: ",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    style = LocalTextStyle.current.merge(
+                        TextStyle(
+                            lineHeight = 20.sp
+                        )
+                    ),
+                    modifier = Modifier
+                        .padding(start=8.dp, end=2.dp),
+                    color = Color.Black
+                )
+                Text(
+                    text = recipe.cookTime,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = Color.Black
+                )
+            }
         }
     }
 }
