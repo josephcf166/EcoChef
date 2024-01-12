@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ecochef.R
@@ -49,17 +50,18 @@ fun ProfileScreen(activity: ComponentActivity, onRecipePage: MutableState<Boolea
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.ash_grey))
             .padding(start = 7.dp)
     ){
         Row(
             modifier = Modifier
                 .wrapContentSize(Alignment.Center)
-                .align(Alignment.CenterHorizontally)) {
+                .align(Alignment.CenterHorizontally)
+                .padding(8.dp)) {
             Text(
                 text = "Profile Screen",
                 fontSize = 40.sp,
-                color= Color.Black
+                color= Color.Black,
+                fontWeight = FontWeight.Bold
             )
         }
         Divider(color = colorResource(R.color.black),
@@ -75,12 +77,14 @@ fun ProfileScreen(activity: ComponentActivity, onRecipePage: MutableState<Boolea
             Text(
                 text = "Dietary Options:",
                 fontSize = 20.sp,
-                color=Color.Black
+                color=Color.Black,
+                fontWeight = FontWeight.Bold
             )}
         Row(
             modifier = Modifier
                 .wrapContentSize(Alignment.Center)
                 .align(Alignment.CenterHorizontally)
+                .padding(4.dp)
         ) {
             Text(text = "(select one)",
                 fontSize = 20.sp,
@@ -125,16 +129,19 @@ fun ProfileScreen(activity: ComponentActivity, onRecipePage: MutableState<Boolea
             modifier = Modifier
                 .wrapContentSize(Alignment.Center)
                 .align(Alignment.CenterHorizontally)
+                .padding(1.dp)
         ) {
             Text(
                 text = "Allergen Options:",
                 fontSize = 20.sp,
-                color=Color.Black
+                color=Color.Black,
+                fontWeight = FontWeight.Bold
             )}
         Row(
             modifier = Modifier
                 .wrapContentSize(Alignment.Center)
                 .align(Alignment.CenterHorizontally)
+                .padding(4.dp)
         ) {
             Text(text = "(select any)",
                 fontSize = 20.sp,
