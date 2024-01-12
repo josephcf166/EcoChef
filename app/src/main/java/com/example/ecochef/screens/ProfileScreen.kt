@@ -58,7 +58,7 @@ fun ProfileScreen(activity: ComponentActivity, onRecipePage: MutableState<Boolea
                 .align(Alignment.CenterHorizontally)
                 .padding(8.dp)) {
             Text(
-                text = "Profile Screen",
+                text = "Preferences",
                 fontSize = 40.sp,
                 color= Color.Black,
                 fontWeight = FontWeight.Bold

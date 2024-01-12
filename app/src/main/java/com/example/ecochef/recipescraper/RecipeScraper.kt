@@ -179,8 +179,6 @@ fun getFinalSearchURL(componentActivity: ComponentActivity): String{
         }
     }
 
-    // remove extra comma at the end
-    urlString.dropLast(1)
     Log.d("SearchDebug", "$urlString")
 
     return urlString

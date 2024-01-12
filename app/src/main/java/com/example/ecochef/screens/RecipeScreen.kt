@@ -105,7 +105,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
                     Column {
                         Text(
                             text = "\uD83D\uDD2A Preparation time: ${recipe.prepTime}",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             modifier = Modifier.padding(top = 8.dp),
                             color = Color.Black
                         )
@@ -113,7 +113,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
                         // Cooking Time
                         Text(
                             text = "\uD83C\uDF73 Cooking time: ${recipe.cookTime}",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             modifier = Modifier.padding(top = 8.dp),
                             color = Color.Black
                         )
@@ -122,7 +122,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
                     // Serves
                     Text(
                         text = "\uD83C\uDF7D ${recipe.numOfServings}",
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .padding(start = 10.dp),

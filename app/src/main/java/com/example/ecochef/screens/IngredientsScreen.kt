@@ -1,5 +1,6 @@
 package com.example.ecochef.screens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -75,6 +76,7 @@ val roboto = FontFamily(
     Font(R.font.roboto, FontWeight.Normal),
 )
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: MutableState<Boolean>){
