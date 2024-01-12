@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.ecochef.R
+import com.example.ecochef.recipescraper.Recipe
 
 @Composable
 fun recipeScreen(recipe: Recipe?) {
