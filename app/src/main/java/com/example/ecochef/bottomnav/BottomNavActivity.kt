@@ -49,9 +49,9 @@ fun BottomNavigationBar(componentActivity: ComponentActivity) {
         )
 
         Scaffold(
-            topBar = {  Surface(color=Color(colorResource(R.color.ash_grey).toArgb())) {ScreenTopBar(componentActivity, navController, onRecipePage)}},
+            topBar = {  Surface(color=Color(colorResource(R.color.mint_white).toArgb())) {ScreenTopBar(componentActivity, navController, onRecipePage)}},
             bottomBar = {
-                Surface(color=Color(colorResource(R.color.ash_grey).toArgb())) {
+                Surface(color=Color(colorResource(R.color.mint_white).toArgb())) {
                     BottomNavigation(
                         modifier = Modifier.clip(
                             shape = RoundedCornerShape(
