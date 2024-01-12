@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -56,7 +59,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -64,6 +70,10 @@ import androidx.core.app.ComponentActivity
 import com.example.ecochef.Ingredients
 import com.example.ecochef.R
 import com.example.ecochef.getIngredientsList
+
+val roboto = FontFamily(
+    Font(R.font.roboto, FontWeight.Normal),
+)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -79,7 +89,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: Mutabl
     val yourIngredients: MutableList<Ingredients> = remember { mutableStateListOf<Ingredients>() }
     val allIngredients: MutableList<Ingredients> = remember { mutableStateListOf<Ingredients>() }
     var searchedIngredients: MutableList<Ingredients> = remember { mutableStateListOf<Ingredients>() }
-    val mutableList = mutableListOf<String>()
+
     LaunchedEffect(key1 = Unit) {
 
         for ((key, value) in customIngredients.all) {
@@ -97,7 +107,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: Mutabl
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.mint_white))
-            //.wrapContentSize(Alignment.Center)
+
     ){
         var text by remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -153,41 +163,90 @@ fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: Mutabl
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         ) {
             // Spacer to push the text to the center
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(0.2f))
 
             // Centered Text
             Text(
                 text = if (isAll) "All Ingredients" else "Your Ingredients",
-                fontSize = 30.sp,
-                color = Color.Black
+                fontSize = 32.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontFamily = roboto
             )
 
             // Another Spacer to push the switch and text to the right
             Spacer(modifier = Modifier.weight(0.2f))
-
-            // Switch and Text grouped together on the right
-            Switch(
-                checked = isAll,
-                onCheckedChange = { isAll = !isAll },
-                modifier = Modifier.height(10.dp)
-            )
-            Text(
-                text = if (isAll) "All" else "Your",
-                fontSize = 20.sp,
-                color = Color.Black,
-                modifier = Modifier.padding(end=7.dp)
-            )
         }
         Divider(
             color = colorResource(R.color.black),
             thickness = 1.dp,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
-                .padding(bottom = 5.dp)
+                .padding(bottom = 12.dp)
         )
+
+        if(isAll){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = { showDialog = true },
+                    // Set the button width to 66% of the screen's width
+                    modifier = Modifier
+                        .fillMaxWidth(0.66f)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(Color(colorResource(id = R.color.spotify_green).toArgb()))
+                ) {
+                    Text(
+                        "+ Ingredient",
+                        style = androidx.compose.ui.text.TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.White
+                        ),
+                        fontFamily = roboto,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(0.dp)
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 4.dp)
+        ) {
+            // Switch and Text grouped together on the right
+            Switch(
+                checked = isAll,
+                onCheckedChange = { isAll = !isAll },
+                modifier = Modifier.height(38.dp),
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = Color(colorResource(id = R.color.spotify_green).toArgb()),
+                    uncheckedThumbColor = Color.White,
+                    uncheckedTrackColor = Color(colorResource(id = R.color.lime_green).toArgb()),
+                )
+
+            )
+            Text(
+                text = if (isAll) "All Ingredients" else "Your Ingredients",
+                fontSize = 20.sp,
+                color = Color.Black,
+                fontFamily = roboto,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(6.dp)
+            )
+        }
+
         if (!isAll) {
             yourIngredients.clear()
             allIngredients.forEach() {
@@ -215,32 +274,6 @@ fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: Mutabl
 
         }
         else {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = { showDialog = true },
-                    // Set the button width to 66% of the screen's width
-                    modifier = Modifier
-                        .fillMaxWidth(0.66f)
-                        .height(40.dp),
-                    colors = ButtonDefaults.buttonColors(Color(colorResource(id = R.color.lime_green).toArgb()))
-                ) {
-                    Text(
-                        "+ Ingredient",
-                        style = androidx.compose.ui.text.TextStyle(
-                            fontSize = 18.sp,
-                            color = Color.Black
-                        ),
-                        modifier = Modifier.padding(0.dp)
-                    )
-                }
-            }
-
             if (showDialog) {
                 Dialog(onDismissRequest = { showDialog = false }) {
                     Surface(
@@ -347,32 +380,28 @@ fun ingredientCard(
         remember { mutableStateOf(selectedIngredients.getBoolean(ingredient.Iname, false)) }
     Log.d("MyTag",  "${ingredient.Iname}: ${selectedIngredients.getBoolean(ingredient.Iname, false)}")
     selected.value = selectedIngredients.getBoolean(ingredient.Iname, false)
-    Card(modifier = Modifier.padding(5.dp),
+    Card(modifier = Modifier
+        .padding(3.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = cardColors(
             containerColor =
                 when {
-                    selected.value -> colorResource(id = R.color.lime_green)
-                    else -> Color(0xFFE6E0E9)
+                    selected.value -> Color(0xFFBFF199)
+                    else -> Color(0xFFe9e9e9)
                 }
         ),
         border = BorderStroke(
-
-                when {
-                    selected.value -> 5.dp
-                    else -> 0.dp
-                }
-
-            ,
-                when {
-                    selected.value -> colorResource(id = R.color.spotify_green)
-                    else -> colorResource(id = R.color.mint_white)
-                }
+            width = 1.dp,
+            color = when {
+                selected.value -> colorResource(id = R.color.lime_green)
+                else -> Color(0xffd9d9d9)
+            }
         ),
 
         onClick = {
 
             selected.value = !selected.value
-            Log.d("MyTag", "${ingredient.Iname}: ${selected.value}")
+            Log.d("Ingredient", "${ingredient.Iname}: ${selected.value}")
             if (!selected.value && !isAll){
                 yourIngredients.remove(ingredient)
             }
@@ -380,33 +409,39 @@ fun ingredientCard(
         }) {
 
         if (ingredient.custom) {
-            Button(onClick = {
-                yourIngredients.remove(ingredient)
-                searchedIngredients.remove(ingredient)
-                removeCustom(activity = componentActivity, ingredient.Iname)
-            },
-                modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text("remove", color=Color.Black)
+            Button(
+                onClick = {
+                    yourIngredients.remove(ingredient)
+                    searchedIngredients.remove(ingredient)
+                    removeCustom(activity = componentActivity, ingredient.Iname)
+                },
+                shape = RoundedCornerShape(0.dp),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                colors = ButtonDefaults.buttonColors(Color(colorResource(id = R.color.spotify_green).toArgb()))
+            ) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "The button to remove the custom ingredient")
             }
         }
-            Image(
-                painter = painterResource(id = ingredient.imageInt),
-                contentDescription = ingredient.Iname,
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier
-                    .padding(5.dp)
-                    .size(120.dp)
-                    .padding(bottom = 0.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
+
+        Image(
+            painter = painterResource(id = ingredient.imageInt),
+            contentDescription = ingredient.Iname,
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier
+                .size(134.dp)
+        )
 
         Text(
             text = ingredient.Iname,
-            fontSize = 15.sp,
-            fontStyle = FontStyle(600),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = roboto,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(10.dp), color=Color.Black
+                .padding(8.dp), color=Color.Black
         )
 
     }
