@@ -8,7 +8,7 @@ data class Ingredients (var Iname : String, var imageInt: Int = R.drawable.custo
 
 fun getIngredientsList(): MutableList<Ingredients> {
     val ingredientsList = mutableStateListOf<Ingredients>()
-    ingredientsList.add(Ingredients("Burger with no honey mustard", R.drawable.beef_burger))
+    ingredientsList.add(Ingredients("Burger", R.drawable.beef_burger))
     ingredientsList.add(Ingredients("Almond",R.drawable.almond))
     ingredientsList.add(Ingredients("Anchovies",R.drawable.anchovy))
     ingredientsList.add(Ingredients("Apple",R.drawable.apple))

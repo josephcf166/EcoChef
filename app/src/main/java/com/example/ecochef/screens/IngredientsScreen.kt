@@ -311,10 +311,10 @@ fun IngredientsScreen(componentActivity: ComponentActivity, onRecipePage: Mutabl
                                     showDialog = false
                                     updateCustomIngredients(componentActivity, textInput)
                                 }, modifier = Modifier.padding(end = 8.dp)) {
-                                    Text("Add", color = Color.Black)
+                                    Text("Add", color = Color.White)
                                 }
                                 Button(onClick = { showDialog = false }) {
-                                    Text("Close", color = Color.Black)
+                                    Text("Close", color = Color.White)
                                 }
                             }
                         }
