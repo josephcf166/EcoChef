@@ -28,7 +28,7 @@ fun GetRecipe(url: String): MutableList<Recipe> {
 
             val ingredientsElements = recipeDocument.select("div.recipe-ingredients-wrapper")
 
-            val subRecipes = mutableListOf<Recipe>()
+            val subRecipes = mutableListOf<SubRecipe>()
 
             var subRecipeName = String()
             var ingredients = listOf<String>()
@@ -49,13 +49,29 @@ fun GetRecipe(url: String): MutableList<Recipe> {
                     subIngredients = elem.select("li")
                         .map { it.text() }
 
-                    subRecipes.add(Recipe(subRecipeName, subIngredients, null, null))
+                    subRecipes.add(SubRecipe(subRecipeName, subIngredients))
 
                     subRecipeName = ""
-                    subIngredients = listOf()
                 }
             }
-            recipes.add(Recipe(recipeDocument.select("h1.content-title__text").text(), ingredients, subRecipes, recipeImage))
+
+            var recipeInstructionsDoc = recipeDocument.select("ol.recipe-method__list")
+            var recipeInstructions = recipeInstructionsDoc[0].children().map {
+                it.text()
+            }
+
+            recipes.add(
+                Recipe(
+                    name = recipeDocument.select("h1.content-title__text").text(),
+                    ingredients = ingredients,
+                    instructions = recipeInstructions,
+                    description = recipeDocument.select("p.recipe-description__text").text(),
+                    prepTime = recipeDocument.select("p.recipe-metadata__prep-time").eachText()[0],
+                    cookTime = recipeDocument.select("p.recipe-metadata__cook-time").eachText()[0],
+                    numOfServings = recipeDocument.select("p.recipe-metadata__serving").eachText()[0],
+                    subRecipes = subRecipes,
+                    imageURL = recipeImage
+                ))
         }
 
     } catch (e: Exception) {
