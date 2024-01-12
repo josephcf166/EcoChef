@@ -28,8 +28,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -59,7 +62,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
                     fontSize = 30.sp,
                     color = Color(colorResource(id = R.color.spotify_green).toArgb()),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(5.dp)
                 )
 
                 // Image Section
@@ -101,7 +104,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
                 Row {
                     Column {
                         Text(
-                            text = "\uD83D\uDD2APreparation time: overnight",
+                            text = "\uD83D\uDD2A Preparation time: ${recipe.prepTime}",
                             fontSize = 16.sp,
                             modifier = Modifier.padding(top = 8.dp),
                             color = Color.Black
@@ -109,7 +112,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
 
                         // Cooking Time
                         Text(
-                            text = "\uD83C\uDF73Cooking time: 2 hours",
+                            text = "\uD83C\uDF73 Cooking time: ${recipe.cookTime}",
                             fontSize = 16.sp,
                             modifier = Modifier.padding(top = 8.dp),
                             color = Color.Black
@@ -118,7 +121,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
 
                     // Serves
                     Text(
-                        text = "\uD83C\uDF7DServes: 6-8",
+                        text = "\uD83C\uDF7D ${recipe.numOfServings}",
                         fontSize = 16.sp,
                         modifier = Modifier
                             .padding(top = 8.dp)
@@ -127,11 +130,20 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
                     )
                 }
 
+                Text(
+                    text = "${recipe.description}",
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .align(Alignment.Start) // Align to start
+                        .padding(12.dp),
+                    color = Color.Black
+                )
+
                 Divider(color = colorResource(R.color.black),
                     thickness = 1.dp,
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
-                        .padding(top = 22.dp, bottom = 0.dp))
+                        .padding(top = 15.dp, bottom = 0.dp))
 
                 // Ingredients Text
                 Text(
@@ -147,7 +159,7 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
 
                 Card(
                     modifier = Modifier
-                        .fillMaxWidth(0.9f)
+                        .fillMaxWidth(0.95f)
                         .align(Alignment.CenterHorizontally),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFE6E0E9))
                 ) {
@@ -183,6 +195,47 @@ fun RecipeScreen(navController: NavController, recipe: Recipe?, onRecipePage: Mu
                                 color = Color.Black
                             )
                         }
+                    }
+                }
+
+                // Instructions Text
+                Text(
+                    text = "Instructions",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally) // Align to start
+                        .padding(bottom = 10.dp, top = 15.dp),
+                    color = Color(colorResource(id = R.color.spotify_green).toArgb()),
+                    textAlign = TextAlign.Center
+                )
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(0.95f)
+                        .align(Alignment.CenterHorizontally),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE6E0E9))
+                ) {
+                    // Description Text
+                    var instructionCount:Int = 0
+                    for (instruction in recipe.instructions!!) {
+                        instructionCount+=1
+                        val annotatedText = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
+                                append("$instructionCount")
+                            }
+                            withStyle(style = SpanStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal)) {
+                                append(" - $instruction")
+                            }
+                        }
+
+                        Text(
+                            text = annotatedText,
+                            modifier = Modifier
+                                .align(Alignment.Start) // Align to start
+                                .padding(8.dp),
+                            color = Color.Black
+                        )
                     }
                 }
             }
