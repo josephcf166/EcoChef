@@ -127,7 +127,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.ash_grey))
+            .background(colorResource(id = R.color.mint_white))
             .wrapContentSize(Alignment.Center)
     ){
         /*
@@ -210,7 +210,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 5.dp))
-        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(3), modifier = Modifier.heightIn(min=0.dp, max=120.dp), content = {items(yourIngredients) {
+        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(3), modifier = Modifier.heightIn(min=0.dp, max=130.dp), content = {items(yourIngredients) {
             ingredient ->
             ingredientCard(
                 ingredient = ingredient,
