@@ -170,11 +170,11 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
 
             active = false,
             onActiveChange = {  },
-            placeholder = { Text("Ingredient Search") },
+            placeholder = { Text("Ingredient Search", color=Color.Black) },
             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
             trailingIcon = {
                 if (text.isNotEmpty()) {
-                    IconButton(onClick = { text = "" }) {
+                    IconButton(onClick = { text = "";keyboardController?.hide() }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             tint = MaterialTheme.colorScheme.onSurface,
@@ -203,7 +203,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
         Text(
             text = "Your Ingredients",
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 30.sp
+            fontSize = 30.sp, color=Color.Black
         )
         Divider(color = colorResource(R.color.black),
             thickness = 1.dp,
@@ -225,7 +225,7 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
         Text(
             text = "All Ingredients",
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 30.sp
+            fontSize = 30.sp, color=Color.Black
         )
         Divider(color = colorResource(R.color.black),
             thickness = 1.dp,
@@ -268,12 +268,12 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(8.dp),
-                            fontSize = 23.sp
+                            fontSize = 23.sp, color=Color.Black
                         )
                         TextField(
                             value = textInput,
                             onValueChange = { textInput = it },
-                            label = { Text("Ingredient name") }
+                            label = { Text("Ingredient name", color=Color.Black) }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Row {
@@ -283,10 +283,10 @@ fun IngredientsScreen(componentActivity: ComponentActivity){
                                 showDialog = false
                                 updateCustomIngredients(componentActivity, textInput)
                             }, modifier = Modifier.padding(end=8.dp)) {
-                                Text("Add")
+                                Text("Add", color=Color.Black)
                             }
                             Button(onClick = { showDialog = false }) {
-                                Text("Close")
+                                Text("Close", color=Color.Black)
                             }
                         }
                     }
@@ -400,7 +400,7 @@ fun ingredientCard(
                 removeCustom(activity = componentActivity, ingredient.Iname)
             },
                 modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text("remove")
+                Text("remove", color=Color.Black)
             }
         }
         
@@ -423,7 +423,7 @@ fun ingredientCard(
             fontStyle = FontStyle(600),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(bottom = 10.dp, top = 10.dp)
+                .padding(bottom = 10.dp, top = 10.dp), color=Color.Black
         )
 
     }

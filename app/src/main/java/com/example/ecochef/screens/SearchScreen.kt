@@ -99,7 +99,6 @@ fun SearchScreen(componentActivity: ComponentActivity){
 
 
     var urlString = getFinalSearchURL(componentActivity)
-
     LoadNextRecipePage(urlString, page, recipes, loadingRecipes)
 
     Box(
@@ -321,7 +320,8 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
                     )
                 ),
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(8.dp),
+                color = Color.Black
             )
 
             Text(
@@ -329,7 +329,8 @@ fun RecipeItem(recipe: Recipe, modifier: Modifier = Modifier, recipeSelectedHand
                 fontSize = 12.sp,
                 modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                color = Color.Black
             )
         }
     }

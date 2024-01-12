@@ -16,14 +16,17 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
@@ -42,23 +45,23 @@ fun recipeScreen(recipe: Recipe?) {
     if (recipe == null) {
         Text(text = "No recipe information found", color = Color.Red)
     } else {
-        Card(
-            modifier = Modifier
-                .padding(5.dp)
-                .fillMaxSize(),  // Adjusted to fillMaxSize for full screen
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFE6E0E9))
-        ) {
-            Column(modifier = Modifier
-                .padding(5.dp) // Padding inside the card
-                .fillMaxSize()) {
+        Surface(color = Color(colorResource(id = R.color.mint_white).toArgb())) {
+            Column(
+                modifier = Modifier
+                    .padding(5.dp) // Padding inside the card
+                    .fillMaxSize()
+                    .background(color = Color(colorResource(id = R.color.mint_white).toArgb()))
+            ) {
 
                 // Title Text
+
                 Text(
                     text = recipe.name,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center
+                    fontSize = 30.sp,
+                    color = Color(colorResource(id = R.color.spotify_green).toArgb()),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
                 // Image Section
@@ -70,6 +73,11 @@ fun recipeScreen(recipe: Recipe?) {
                         modifier = Modifier
                             .fillMaxWidth() // Adjusted to fillMaxWidth
                             .padding(5.dp)
+                            .clip(shape = RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = 16.dp,
+                                bottomStart = 16.dp,
+                                bottomEnd = 16.dp))
                     )
                 } else {
                     Image(
@@ -79,6 +87,11 @@ fun recipeScreen(recipe: Recipe?) {
                         modifier = Modifier
                             .fillMaxWidth() // Adjusted to fillMaxWidth
                             .padding(5.dp)
+                            .clip(shape = RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = 16.dp,
+                                bottomStart = 16.dp,
+                                bottomEnd = 16.dp))
                     )
                 }
                 Row {
@@ -86,14 +99,16 @@ fun recipeScreen(recipe: Recipe?) {
                         Text(
                             text = "\uD83D\uDD2APreparation time: overnight",
                             fontSize = 16.sp,
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier = Modifier.padding(top = 8.dp),
+                            color = Color.Black
                         )
 
                         // Cooking Time
                         Text(
                             text = "\uD83C\uDF73Cooking time: 2 hours",
                             fontSize = 16.sp,
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier = Modifier.padding(top = 8.dp),
+                            color = Color.Black
                         )
                     }
 
@@ -101,29 +116,70 @@ fun recipeScreen(recipe: Recipe?) {
                     Text(
                         text = "\uD83C\uDF7DServes: 6-8",
                         fontSize = 16.sp,
-                        modifier = Modifier.padding(top = 8.dp).padding(start = 10.dp)
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .padding(start = 10.dp),
+                        color = Color.Black
                     )
                 }
 
+                Divider(color = colorResource(R.color.black),
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .padding(top = 22.dp, bottom = 0.dp))
+
                 // Ingredients Text
                 Text(
-                    text = "Ingredients:",
+                    text = "Ingredients",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    fontSize = 30.sp,
                     modifier = Modifier
-                        .align(Alignment.Start) // Align to start
-                        .padding(8.dp)
+                        .align(Alignment.CenterHorizontally) // Align to start
+                        .padding(bottom = 10.dp, top=0.dp),
+                    color = Color(colorResource(id = R.color.spotify_green).toArgb()),
+                    textAlign = TextAlign.Center
                 )
 
-                // Description Text
-                for (ingredient in recipe.ingredients!!) {
-                    Text(
-                        text = "• $ingredient",
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .align(Alignment.Start) // Align to start
-                            .padding(8.dp)
-                    )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .align(Alignment.CenterHorizontally),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE6E0E9))
+                ) {
+                    // Description Text
+                    for (ingredient in recipe.ingredients!!) {
+                        Text(
+                            text = "• $ingredient",
+                            fontSize = 16.sp,
+                            modifier = Modifier
+                                .align(Alignment.Start) // Align to start
+                                .padding(8.dp),
+                            color = Color.Black
+                        )
+                    }
+
+                    for (subRecipe in recipe.subRecipes!!) {
+                        Text(
+                            text = "${subRecipe.name}",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally) // Align to start
+                                .padding(8.dp),
+                            color = Color.Black
+                        )
+                        for (ingredient in subRecipe.ingredients!!) {
+                            Text(
+                                text = "• $ingredient",
+                                fontSize = 16.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Start) // Align to start
+                                    .padding(8.dp),
+                                color = Color.Black
+                            )
+                        }
+                    }
                 }
             }
         }

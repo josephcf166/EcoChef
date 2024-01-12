@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
@@ -55,6 +56,7 @@ fun ProfileScreen(activity: ComponentActivity){
             Text(
                 text = "Profile Screen",
                 fontSize = 40.sp,
+                color= Color.Black
             )
         }
         Divider(color = colorResource(R.color.black),
@@ -69,7 +71,8 @@ fun ProfileScreen(activity: ComponentActivity){
         ) {
             Text(
                 text = "Dietary Options:",
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color=Color.Black
             )}
         Row(
             modifier = Modifier
@@ -78,7 +81,8 @@ fun ProfileScreen(activity: ComponentActivity){
         ) {
             Text(text = "(select one)",
                 fontSize = 20.sp,
-                modifier = Modifier.alpha(0.4f)
+                modifier = Modifier.alpha(0.4f),
+                color=Color.Black
             )
         }
         dietOptions.forEach { text ->
@@ -104,7 +108,8 @@ fun ProfileScreen(activity: ComponentActivity){
                     text = text,
                     style = TextStyle(
                         fontSize = 24.sp),
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp),
+                    color=Color.Black
                 )
             }
         }
@@ -120,7 +125,8 @@ fun ProfileScreen(activity: ComponentActivity){
         ) {
             Text(
                 text = "Allergen Options:",
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color=Color.Black
             )}
         Row(
             modifier = Modifier
@@ -129,7 +135,8 @@ fun ProfileScreen(activity: ComponentActivity){
         ) {
             Text(text = "(select any)",
                 fontSize = 20.sp,
-                modifier = Modifier.alpha(0.4f)
+                modifier = Modifier.alpha(0.4f),
+                color=Color.Black
             )
         }
         allergyOptions.forEach { option : String ->
@@ -162,7 +169,8 @@ fun ProfileScreen(activity: ComponentActivity){
                     text = option,
                     style = TextStyle(
                         fontSize = 24.sp),
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp),
+                    color=Color.Black
                 )
             }
         }
